@@ -2,7 +2,7 @@
 import os
 import threading
 
-from PySide6.QtCore import QThread
+from PySide6.QtCore import QThread, QAbstractTableModel
 from PySide6.QtWidgets import QMainWindow, QListView, QAbstractItemView, QFileDialog
 
 import ui
@@ -20,14 +20,17 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # 文件列表显示
         self.__fileList = fileList.FileList()
 
-        # source index 参考 models.metadata
+        # source 列表 index 参考 models.metadata
         self.__source_item = ['THB Wiki', 'Json file']
         self.__source_btn_enabled = [False] * 1 + [True]
         self.__source_btn_text = ["Search"] * 1 + ["Load"]
 
-        self.__source_metadata = None
+        # MetadataReq
+        self.__source_metadata_req = None
+        # http 请求线程
         self.__source_search_lock = threading.Lock()
         self.__source_search_thread = None
 
@@ -64,6 +67,11 @@ class MainWindow(QMainWindow):
         self.ui.fileRenameText.setText("%{track} %{title}")
         self.ui.fileRenameCheck.clicked.connect(self.on_rename_check)
 
+        self.ui.infoTableView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.ui.infoTableView.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.ui.infoTableView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.ui.infoTableView.doubleClicked.connect(self.on_source_album_selected)
+
     def on_file_select(self):
         """
         导入目录
@@ -90,6 +98,8 @@ class MainWindow(QMainWindow):
                     self.__fileList.add(filelist[0])
                 except ThtException as e:
                     print(e)
+                else:
+                    self.ui.infoSearchKeyText.setText(os.path.basename(filelist[0]))
 
     def on_file_reload(self):
         """
@@ -164,37 +174,81 @@ class MainWindow(QMainWindow):
             if self.__source_search_thread is not None:
                 if self.__source_search_thread.isRunning:
                     self.__source_search_thread.exit()
-            self.__source_metadata = metadata.MetadataReq(index, key)
+            self.__source_metadata_req = metadata.MetadataReq(index, key)
             self.__source_search_thread = QThread(self)
-            self.__source_search_thread.started.connect(self.__source_metadata.search_album)
-            self.__source_metadata.moveToThread(self.__source_search_thread)
-            self.__source_metadata.album_search_finished.connect(self.on_source_album_finished)
-            self.__source_metadata.metadata_search_finished.connect(self.on_source_metadata_finished)
+            self.__source_search_thread.started.connect(self.__source_metadata_req.search_album)
+            self.__source_metadata_req.album_search_finished.connect(self.on_source_album_finished)
+            self.__source_metadata_req.metadata_search_finished.connect(self.on_source_metadata_finished)
+            self.__source_metadata_req.exception_raise.connect(self.on_source_exception)
+            self.__source_metadata_req.moveToThread(self.__source_search_thread)
         # 专辑搜索
         self.__source_search_thread.start()
 
-    def on_source_album_finished(self, data):
-        """
-        专辑搜索完成
-        :param data: 结果列表
-        :return:
-        """
-        print(data)
+    def stop_source_request_thread(self):
         with self.__source_search_lock:
             if self.__source_search_thread is not None:
                 self.__source_search_thread.exit()
                 self.__source_search_thread = None
 
-    def on_source_metadata_finished(self, data):
+    def on_source_album_finished(self):
         """
-        元数据搜索完成
-        :param data: 结果列表
+        专辑搜索完成
         :return:
         """
-        print(data)
-        print("exit")
-        self.__source_search_thread.exit()
-        self.__source_search_thread = None
+        if self.__source_metadata_req.get_status() != 1:
+            return
+
+        # 在表格中显示
+        self.ui.infoTableView.setModel(self.__source_metadata_req.get_source_table_model())
+        self.ui.infoTableView.resizeColumnsToContents()
+        self.ui.infoTableView.resizeRowsToContents()
+
+        self.stop_source_request_thread()
+
+    def on_source_album_selected(self):
+        """
+        选中专辑
+        :return:
+        """
+        if self.__source_metadata_req.get_status() != 1:
+            return
+        index = self.ui.infoTableView.selectedIndexes()
+        if len(index) == 0:
+            return
+        index = index[0].row() + 1
+        print(self.__source_metadata_req.get_source_album_list()[0][index])
+
+        self.__source_metadata_req.set_key(self.__source_metadata_req.get_source_album_list()[1][index])
+
+        # 在新线程中处理请求
+        with self.__source_search_lock:
+            if self.__source_search_thread is not None:
+                if self.__source_search_thread.isRunning:
+                    self.__source_search_thread.exit()
+            self.__source_search_thread = QThread(self)
+            self.__source_search_thread.started.connect(self.__source_metadata_req.search_metadata)
+            self.__source_metadata_req.moveToThread(self.__source_search_thread)
+        # 获取整专元数据
+        self.__source_search_thread.start()
+
+    def on_source_metadata_finished(self):
+        """
+        元数据搜索完成
+        :return:
+        """
+        if self.__source_metadata_req.get_status() != 2:
+            return
+        print(self.__source_metadata_req.get_source_metadata_list())
+        self.stop_source_request_thread()
+
+    def on_source_exception(self, exception: ThtException):
+        """
+        搜索字线程异常捕获
+        :param exception:
+        :return:
+        """
+        print(exception)
+        self.stop_source_request_thread()
 
     def on_json_load(self, key: str):
         """

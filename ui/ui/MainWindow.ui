@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>thtagger - weilinfox</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -27,7 +27,7 @@
        <bool>true</bool>
       </property>
       <property name="title">
-       <string>Import file(s)</string>
+       <string>Open folder(s)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -66,7 +66,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Import</string>
+            <string>Open</string>
            </property>
           </widget>
          </item>
@@ -269,19 +269,6 @@
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0" rowspan="2">
-          <widget class="QListView" name="editListView">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>1</horstretch>
-             <verstretch>1</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="locale">
-            <locale language="English" country="HongKong"/>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
           <widget class="QLabel" name="albumCoverLable">
            <property name="minimumSize">
@@ -292,7 +279,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>128</width>
+             <width>16777215</width>
              <height>16777215</height>
             </size>
            </property>
@@ -305,20 +292,29 @@
           <widget class="QLabel" name="albumCover">
            <property name="minimumSize">
             <size>
-             <width>128</width>
-             <height>128</height>
+             <width>100</width>
+             <height>100</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>128</width>
-             <height>128</height>
+             <width>16777215</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="text">
-            <string/>
+            <string>No image</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::AutoText</enum>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
            </property>
           </widget>
+         </item>
+         <item row="0" column="0" rowspan="2">
+          <widget class="QTableView" name="infoTableView"/>
          </item>
         </layout>
        </item>
@@ -346,9 +342,6 @@
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>3</number>
-       </property>
        <item>
         <widget class="QTableView" name="tagTableView">
          <property name="minimumSize">
@@ -366,26 +359,58 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="tagSaveButton">
-         <property name="minimumSize">
-          <size>
-           <width>84</width>
-           <height>32</height>
-          </size>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="spacing">
+          <number>50</number>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>32</height>
-          </size>
+         <property name="leftMargin">
+          <number>50</number>
          </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
+         <property name="rightMargin">
+          <number>50</number>
          </property>
-         <property name="text">
-          <string>Save</string>
-         </property>
-        </widget>
+         <item>
+          <widget class="QPushButton" name="tagImportButton">
+           <property name="minimumSize">
+            <size>
+             <width>84</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Import</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="tagSaveButton">
+           <property name="minimumSize">
+            <size>
+             <width>84</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Save</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -413,9 +438,9 @@
     </property>
     <addaction name="actionSave"/>
     <addaction name="separator"/>
-    <addaction name="actionSave_2"/>
     <addaction name="actionJson_template"/>
     <addaction name="separator"/>
+    <addaction name="actionSave_2"/>
     <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
@@ -434,7 +459,7 @@
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Import</string>
+    <string>Open folder(s)</string>
    </property>
   </action>
   <action name="actionJson_template">

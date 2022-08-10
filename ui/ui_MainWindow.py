@@ -173,30 +173,26 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2 = QGridLayout()
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.editListView = QListView(self.editGroup)
-        self.editListView.setObjectName(u"editListView")
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(self.editListView.sizePolicy().hasHeightForWidth())
-        self.editListView.setSizePolicy(sizePolicy)
-        self.editListView.setLocale(QLocale(QLocale.English, QLocale.HongKong))
-
-        self.gridLayout_2.addWidget(self.editListView, 0, 0, 2, 1)
-
         self.albumCoverLable = QLabel(self.editGroup)
         self.albumCoverLable.setObjectName(u"albumCoverLable")
         self.albumCoverLable.setMinimumSize(QSize(128, 0))
-        self.albumCoverLable.setMaximumSize(QSize(128, 16777215))
+        self.albumCoverLable.setMaximumSize(QSize(16777215, 16777215))
 
         self.gridLayout_2.addWidget(self.albumCoverLable, 1, 1, 1, 1)
 
         self.albumCover = QLabel(self.editGroup)
         self.albumCover.setObjectName(u"albumCover")
-        self.albumCover.setMinimumSize(QSize(128, 128))
-        self.albumCover.setMaximumSize(QSize(128, 128))
+        self.albumCover.setMinimumSize(QSize(100, 100))
+        self.albumCover.setMaximumSize(QSize(16777215, 16777215))
+        self.albumCover.setTextFormat(Qt.AutoText)
+        self.albumCover.setAlignment(Qt.AlignCenter)
 
         self.gridLayout_2.addWidget(self.albumCover, 0, 1, 1, 1)
+
+        self.infoTableView = QTableView(self.editGroup)
+        self.infoTableView.setObjectName(u"infoTableView")
+
+        self.gridLayout_2.addWidget(self.infoTableView, 0, 0, 2, 1)
 
 
         self.verticalLayout.addLayout(self.gridLayout_2)
@@ -210,7 +206,6 @@ class Ui_MainWindow(object):
         self.tagGroup.setBaseSize(QSize(0, 0))
         self.tagGroup.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
         self.verticalLayout_2 = QVBoxLayout(self.tagGroup)
-        self.verticalLayout_2.setSpacing(3)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.tagTableView = QTableView(self.tagGroup)
         self.tagTableView.setObjectName(u"tagTableView")
@@ -219,13 +214,27 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.tagTableView)
 
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setSpacing(50)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(50, -1, 50, -1)
+        self.tagImportButton = QPushButton(self.tagGroup)
+        self.tagImportButton.setObjectName(u"tagImportButton")
+        self.tagImportButton.setMinimumSize(QSize(84, 32))
+        self.tagImportButton.setMaximumSize(QSize(16777215, 32))
+
+        self.horizontalLayout_5.addWidget(self.tagImportButton)
+
         self.tagSaveButton = QPushButton(self.tagGroup)
         self.tagSaveButton.setObjectName(u"tagSaveButton")
         self.tagSaveButton.setMinimumSize(QSize(84, 32))
         self.tagSaveButton.setMaximumSize(QSize(16777215, 32))
         self.tagSaveButton.setLayoutDirection(Qt.LeftToRight)
 
-        self.verticalLayout_2.addWidget(self.tagSaveButton)
+        self.horizontalLayout_5.addWidget(self.tagSaveButton)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_5)
 
 
         self.gridLayout.addWidget(self.tagGroup, 0, 1, 2, 1)
@@ -248,9 +257,9 @@ class Ui_MainWindow(object):
         self.menuSource.addAction(self.actionCredit)
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionSave_2)
         self.menuFile.addAction(self.actionJson_template)
         self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionSave_2)
         self.menuFile.addAction(self.actionQuit)
 
         self.retranslateUi(MainWindow)
@@ -259,15 +268,15 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"thtagger - weilinfox", None))
         self.actionCredit.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.actionTHB_Wiki.setText(QCoreApplication.translate("MainWindow", u"THB Wiki", None))
-        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Import", None))
+        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Open folder(s)", None))
         self.actionJson_template.setText(QCoreApplication.translate("MainWindow", u"Json template", None))
         self.actionSave_2.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
-        self.fileGroup.setTitle(QCoreApplication.translate("MainWindow", u"Import file(s)", None))
-        self.fileSelectButton.setText(QCoreApplication.translate("MainWindow", u"Import", None))
+        self.fileGroup.setTitle(QCoreApplication.translate("MainWindow", u"Open folder(s)", None))
+        self.fileSelectButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.fileClearButton.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.fileReloadButton.setText(QCoreApplication.translate("MainWindow", u"Reload", None))
         self.fileUpButton.setText(QCoreApplication.translate("MainWindow", u"Up", None))
@@ -277,8 +286,9 @@ class Ui_MainWindow(object):
         self.infoSearchButton.setText(QCoreApplication.translate("MainWindow", u"Search", None))
         self.fileRenameCheck.setText(QCoreApplication.translate("MainWindow", u"Rename", None))
         self.albumCoverLable.setText("")
-        self.albumCover.setText("")
+        self.albumCover.setText(QCoreApplication.translate("MainWindow", u"No image", None))
         self.tagGroup.setTitle(QCoreApplication.translate("MainWindow", u"Album information", None))
+        self.tagImportButton.setText(QCoreApplication.translate("MainWindow", u"Import", None))
         self.tagSaveButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.menuSource.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
