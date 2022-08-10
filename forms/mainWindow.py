@@ -1,13 +1,14 @@
 
 import os
+import threading
 
+from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QMainWindow, QListView, QAbstractItemView, QFileDialog
 
 import ui
 from ui.ui_MainWindow import Ui_MainWindow
-from models import fileList
+from models import fileList, metadata
 from models.thtException import ThtException
-from utils import remoteDb
 
 _app_name = "thtagger %s" % ui.__version__
 
@@ -20,10 +21,15 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.__fileList = fileList.FileList()
+
+        # source index 参考 models.metadata
         self.__source_item = ['THB Wiki', 'Json file']
-        self.__source_func = [remoteDb.thb_search, self.on_json_load]
         self.__source_btn_enabled = [False] * 1 + [True]
         self.__source_btn_text = ["Search"] * 1 + ["Load"]
+
+        self.__source_metadata = None
+        self.__source_search_lock = threading.Lock()
+        self.__source_search_thread = None
 
         self.bind()
 
@@ -152,7 +158,43 @@ class MainWindow(QMainWindow):
         :return:
         """
         index = self.ui.infoSourceCombo.currentIndex()
-        self.__source_func[index](self.ui.infoSearchKeyText.text())
+        key = self.ui.infoSearchKeyText.text()
+        # 在新线程中处理请求
+        with self.__source_search_lock:
+            if self.__source_search_thread is not None:
+                if self.__source_search_thread.isRunning:
+                    self.__source_search_thread.exit()
+            self.__source_metadata = metadata.MetadataReq(index, key)
+            self.__source_search_thread = QThread(self)
+            self.__source_search_thread.started.connect(self.__source_metadata.search_album)
+            self.__source_metadata.moveToThread(self.__source_search_thread)
+            self.__source_metadata.album_search_finished.connect(self.on_source_album_finished)
+            self.__source_metadata.metadata_search_finished.connect(self.on_source_metadata_finished)
+        # 专辑搜索
+        self.__source_search_thread.start()
+
+    def on_source_album_finished(self, data):
+        """
+        专辑搜索完成
+        :param data: 结果列表
+        :return:
+        """
+        print(data)
+        with self.__source_search_lock:
+            if self.__source_search_thread is not None:
+                self.__source_search_thread.exit()
+                self.__source_search_thread = None
+
+    def on_source_metadata_finished(self, data):
+        """
+        元数据搜索完成
+        :param data: 结果列表
+        :return:
+        """
+        print(data)
+        print("exit")
+        self.__source_search_thread.exit()
+        self.__source_search_thread = None
 
     def on_json_load(self, key: str):
         """
