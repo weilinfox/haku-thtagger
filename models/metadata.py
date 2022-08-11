@@ -71,7 +71,7 @@ class MetadataTableModel(QAbstractTableModel):
         if orientation == Qt.Horizontal:
             return self.__data[0][section]
         elif orientation == Qt.Vertical:
-            return section
+            return section + 1
 
 
 class MetadataReq(QObject):

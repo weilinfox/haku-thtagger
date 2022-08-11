@@ -24,7 +24,7 @@ def thb_search_album(key: str) -> tuple:
         "o": 1,
         "v": key
     }
-    res = requests.get(url=url, params=params, timeout=60)
+    res = requests.get(url=url, params=params, timeout=15)
     if res.status_code == 200:
         ans = res.json()
         list_title = [("Album", "Circle"), ]
@@ -57,7 +57,7 @@ def thb_get_metadata(key: str) -> tuple:
         "p": "name discno trackno artist ogmusic",
         "a": key
     }
-    res = requests.get(url=url, params=params, timeout=60)
+    res = requests.get(url=url, params=params, timeout=15)
     if res.status_code == 200:
         ans = res.json()
         if isinstance(ans, list):

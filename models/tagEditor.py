@@ -161,7 +161,7 @@ class TagEditor(QAbstractTableModel):
         if orientation == Qt.Horizontal:
             return self.tag_title[section]
         elif orientation == Qt.Vertical:
-            return section
+            return section + 1
 
     def add_file(self, file: str):
         """

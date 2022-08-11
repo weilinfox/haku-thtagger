@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
 
         self.ui.fileSelectButton.clicked.connect(self.on_file_select)
         self.ui.fileReloadButton.clicked.connect(self.on_file_reload)
-        self.ui.fileClearButton.clicked.connect(lambda: self.__fileList.clear())
+        self.ui.fileClearButton.clicked.connect(self.on_file_clear)
         self.ui.fileDeleteButton.clicked.connect(self.on_file_delete)
         self.ui.fileUpButton.clicked.connect(lambda: self.on_file_move(-1))
         self.ui.fileDownButton.clicked.connect(lambda: self.on_file_move(1))
@@ -148,6 +148,11 @@ class MainWindow(QMainWindow):
             else:
                 self.ui.fileListView.setCurrentIndex(selected[0].siblingAtRow(selected[0].row()-1))
             self.__tag_editor.remove_file(selected[0].row())
+
+    def on_file_clear(self):
+        self.__fileList.clear()
+        self.__tag_editor.clear_file()
+        self.ui.tagTableView.resizeColumnsToContents()
 
     def on_file_move(self, direction: int):
         """
@@ -248,6 +253,8 @@ class MainWindow(QMainWindow):
         index = index[0].row() + 1
         # print(self.__source_metadata_req.get_source_album_list()[0][index])
 
+        self.ui.infoTableView.setEnabled(False)
+
         self.__source_metadata_req.set_key(self.__source_metadata_req.get_source_album_list()[1][index])
 
         # 在新线程中处理请求
@@ -268,6 +275,8 @@ class MainWindow(QMainWindow):
         """
         if self.__source_metadata_req.get_status() != 2:
             return
+
+        self.ui.infoTableView.setEnabled(True)
 
         # 在表格中显示
         self.ui.infoTableView.setModel(self.__source_metadata_req.get_source_table_model())
@@ -304,6 +313,7 @@ class MainWindow(QMainWindow):
         """
         QMessageBox.warning(self, "Thtagger Exception", str(exception),
                             QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+        self.ui.infoTableView.setEnabled(True)
         self.stop_source_request_thread()
 
     def on_json_load(self, key: str):
