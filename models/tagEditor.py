@@ -3,7 +3,8 @@ import mutagen.mp3
 import mutagen.flac
 import os
 
-from PySide6.QtCore import Signal, QAbstractTableModel, QModelIndex, Qt
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
+from PySide6.QtGui import QFont
 
 from .metadata import Metadata
 
@@ -104,6 +105,8 @@ class TagEditor(QAbstractTableModel):
         super().__init__()
         # list[TagItem]
         self.__data = []
+        # list[bool]
+        self.__edit_tags = []
 
     def rowCount(self, parent=QModelIndex()) -> int:
         return len(self.__data)
@@ -116,8 +119,15 @@ class TagEditor(QAbstractTableModel):
             return None
         if role == Qt.TextAlignmentRole:
             return Qt.AlignLeft
+        elif role == Qt.FontRole:
+            if self.__edit_tags[index.row()]:
+                font = QFont()
+                font.setBold(True)
+                return font
         elif role == Qt.DisplayRole:
             if index.column() == 0:
+                if self.__edit_tags[index.row()]:
+                    return "* " + os.path.basename(self.__data[index.row()].file)
                 return os.path.basename(self.__data[index.row()].file)
             elif index.column() == 1:
                 return self.__data[index.row()].metadata.title
@@ -173,19 +183,22 @@ class TagEditor(QAbstractTableModel):
 
         self.beginInsertRows(QModelIndex(), index, index)
         self.__data.append(item)
+        self.__edit_tags.append(False)
         self.endInsertRows()
 
-    def insert_file(self, index: int, file: TagItem):
+    def insert_file(self, index: int, file: TagItem, flag: bool):
         """
         插入项目对象
         :param index: 位置
         :param file: 对象
+        :param flag: 编辑标记
         :return:
         """
         if index > len(self.__data):
             return
         self.beginInsertRows(QModelIndex(), index, index)
         self.__data.insert(index, file)
+        self.__edit_tags.insert(index, flag)
         self.endInsertRows()
 
     def remove_file(self, index: int):
@@ -198,10 +211,9 @@ class TagEditor(QAbstractTableModel):
             return
 
         self.beginRemoveRows(QModelIndex(), index, index)
-        obj = self.__data.pop(index)
+        self.__data.pop(index)
+        self.__edit_tags.pop(index)
         self.endRemoveRows()
-
-        return obj
 
     def clear_file(self):
         """
@@ -210,6 +222,7 @@ class TagEditor(QAbstractTableModel):
         """
         self.beginRemoveRows(QModelIndex(), 0, len(self.__data) - 1)
         self.__data.clear()
+        self.__edit_tags.clear()
         self.endRemoveRows()
 
     def swap_file(self, i1: int, i2: int):
@@ -221,16 +234,18 @@ class TagEditor(QAbstractTableModel):
         """
         if i1 >= len(self.__data) or i2 >= len(self.__data) or i1 < 0 or i2 < 0:
             return
+        flag1, flag2 = self.__edit_tags[i1], self.__edit_tags[i2]
         obj1, obj2 = self.__data[i1], self.__data[i2]
 
         self.remove_file(i1)
-        self.insert_file(i1, obj2)
+        self.insert_file(i1, obj2, flag2)
         self.remove_file(i2)
-        self.insert_file(i2, obj1)
+        self.insert_file(i2, obj1, flag1)
 
     def edit_file(self, index: int, data: Metadata):
 
         self.__data[index].metadata.copy_metadata(data)
+        self.__edit_tags[index] = True
 
         top_left = QModelIndex()
         top_left.sibling(index, 0)
