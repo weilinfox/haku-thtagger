@@ -1,6 +1,7 @@
 
 import os
 import threading
+import traceback
 
 from PySide6.QtCore import QThread, QSize, Qt
 from PySide6.QtGui import QImage, QPixmap
@@ -89,6 +90,7 @@ class MainWindow(QMainWindow):
         self.ui.tagTableView.resizeRowsToContents()
 
         self.ui.tagImportButton.clicked.connect(self.on_tag_import_source)
+        self.ui.tagSaveButton.clicked.connect(self.on_tag_save)
 
     def on_file_select(self):
         """
@@ -349,16 +351,38 @@ class MainWindow(QMainWindow):
 
     def on_tag_import_source(self):
         """
-        导入 source 元数据
+        按规则重命名 并 导入 source 元数据
         :return:
         """
-        if self.__source_metadata_req.get_status() != 2:
-            return
-        ans = self.__source_metadata_req.generate_metadata_list()
+        # 重命名
+        fmt = ""
+        if self.ui.fileRenameCheck.isChecked():
+            fmt = self.ui.fileRenameText.text()
+        for i in range(self.__tag_editor.count()):
+            try:
+                self.__tag_editor.edit_file_name(i, fmt)
+            except ThtException as e:
+                QMessageBox.warning(self, "Thtagger Exception", str(e),
+                                    QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+            except Exception:
+                QMessageBox.critical(self, "Unhandled Exception", traceback.format_exc(),
+                                     QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
 
-        for i in range(min(self.__tag_editor.count(), len(ans))):
-            self.__tag_editor.edit_file(i, ans[i])
+        # 元数据修改
+        if self.__source_metadata_req is not None and self.__source_metadata_req.get_status() == 2:
+            ans = self.__source_metadata_req.generate_metadata_list()
+
+            for i in range(min(self.__tag_editor.count(), len(ans))):
+                self.__tag_editor.edit_file(i, ans[i])
+
         self.ui.tagTableView.resizeColumnsToContents()
+
+    def on_tag_save(self):
+        try:
+            self.__tag_editor.save_files()
+        except ThtException as e:
+            QMessageBox.warning(self, "Thtagger Exception", str(e),
+                                QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
 
     def on_rename_check(self):
         """

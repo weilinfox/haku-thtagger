@@ -18,25 +18,25 @@ class Metadata:
         # mp3 only
         self.bitrate_mode = ""
 
-        # TIT2
+        # TIT2 %{title}
         self.title = ""
-        # TPE1
+        # TPE1 %{artist}
         self.artist = ""
-        # TPE2
+        # TPE2 %{album_artist}
         self.album_artist = ""
-        # TALB
+        # TALB %{album}
         self.album = ""
-        # TDRC
-        self.date = ""
-        # TPOS
+        # TDRC %{year}
+        self.year = ""
+        # TPOS %{disk}
         self.disk_number = ""
-        # TRCK
+        # TRCK %{track}
         self.track_number = ""
-        # TCON
+        # TCON %{genre}
         self.genre = ""
         # APIC COVER_FRONT
         self.cover_file = ""
-        # COMM
+        # COMM %{comment}
         self.comment = ""
 
     def copy_metadata(self, new_data):
@@ -44,7 +44,7 @@ class Metadata:
         self.artist = new_data.artist
         self.album_artist = new_data.album_artist
         self.album = new_data.album
-        self.date = new_data.date
+        self.year = new_data.year
         self.disk_number = new_data.disk_number
         self.track_number = new_data.track_number
         self.genre = new_data.genre
@@ -173,7 +173,7 @@ class MetadataReq(QObject):
         list2 = self.__source_metadata_list[1]
         for i in range(1, len(list1)):
             metadata = Metadata()
-            metadata.title, metadata.artist, metadata.album, metadata.album_artist, metadata.date = list1[i][:5]
+            metadata.title, metadata.artist, metadata.album, metadata.album_artist, metadata.year = list1[i][:5]
             metadata.disk_number, metadata.track_number, metadata.genre, metadata.comment = list1[i][5:]
             metadata.cover_file = list2[i][0]
             data_list.append(metadata)

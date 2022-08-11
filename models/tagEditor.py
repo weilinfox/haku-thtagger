@@ -1,3 +1,5 @@
+import traceback
+
 import mutagen.wave
 import mutagen.mp3
 import mutagen.flac
@@ -7,6 +9,7 @@ from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
 from PySide6.QtGui import QFont
 
 from .metadata import Metadata
+from .thtException import ThtException
 
 
 def is_supported(file: str):
@@ -27,21 +30,23 @@ class TagItem:
     wav = "wav"
     valid_formats = [mp3, flac, wav]
 
-    def __init__(self, file: str):
-        split = os.path.splitext(file)
+    def __init__(self, path: str):
+        split = os.path.splitext(path)
         name1 = split[0]
         suffix = split[1].lower()
         if len(suffix) == 0 or suffix[1:] not in self.valid_formats:
             raise Exception("Unsupport file format %s" % suffix)
         suffix = suffix[1:]
-        self.file = file
+        # path = <parent_path>/<filename>.<format>
+        self.path = path
         self.filename = os.path.basename(name1)
-        self.dirname = os.path.dirname(name1)
+        self.parent_path = os.path.dirname(name1)
         self.format = suffix
         self.metadata = Metadata()
+        self.new_path = ""
         self.mutagen_file = None
         if suffix == self.mp3:
-            self.mutagen_file = mutagen.mp3.MP3(file)
+            self.mutagen_file = mutagen.mp3.MP3(path)
             self.metadata.length = self.mutagen_file.info.length
             self.metadata.bitrate = self.mutagen_file.info.bitrate
             self.metadata.channels = self.mutagen_file.info.channels
@@ -55,12 +60,12 @@ class TagItem:
             else:
                 self.metadata.bitrate_mode = "UNKNOWN"
         elif suffix == self.flac:
-            self.mutagen_file = mutagen.flac.FLAC(file)
+            self.mutagen_file = mutagen.flac.FLAC(path)
             self.metadata.length = self.mutagen_file.info.length
             self.metadata.bitrate = self.mutagen_file.info.bitrate
             self.metadata.channels = self.mutagen_file.info.channels
         elif suffix == self.wav:
-            self.mutagen_file = mutagen.wave.WAVE(file)
+            self.mutagen_file = mutagen.wave.WAVE(path)
             self.metadata.length = self.mutagen_file.info.length
             self.metadata.bitrate = self.mutagen_file.info.bitrate
             self.metadata.channels = self.mutagen_file.info.channels
@@ -70,31 +75,31 @@ class TagItem:
         if self.mutagen_file.tags is not None:
             obj = self.mutagen_file.tags.get('TIT2')
             if obj is not None:
-                self.metadata.title = obj.text[0]
+                self.metadata.title = str(obj.text[0])
             obj = self.mutagen_file.tags.get('TPE1')
             if obj is not None:
-                self.metadata.artist = obj.text[0]
+                self.metadata.artist = str(obj.text[0])
             obj = self.mutagen_file.tags.get('TPE2')
             if obj is not None:
-                self.metadata.album_artist = obj.text[0]
+                self.metadata.album_artist = str(obj.text[0])
             obj = self.mutagen_file.tags.get('TALB')
             if obj is not None:
-                self.metadata.album = obj.text[0]
+                self.metadata.album = str(obj.text[0])
             obj = self.mutagen_file.tags.get('TDRC')
             if obj is not None:
-                self.metadata.date = obj.text[0]
+                self.metadata.year = str(obj.text[0])
             obj = self.mutagen_file.tags.get('TPOS')
             if obj is not None:
-                self.metadata.disk_number = obj.text[0]
+                self.metadata.disk_number = str(obj.text[0])
             obj = self.mutagen_file.tags.get('TRCK')
             if obj is not None:
-                self.metadata.track_number = obj.text[0]
+                self.metadata.track_number = str(obj.text[0])
             obj = self.mutagen_file.tags.get('TCON')
             if obj is not None:
-                self.metadata.genre = obj.text[0]
+                self.metadata.genre = str(obj.text[0])
             obj = self.mutagen_file.tags.get('COMM')
             if obj is not None:
-                self.metadata.comment = obj.text[0]
+                self.metadata.comment = str(obj.text[0])
 
 
 class TagEditor(QAbstractTableModel):
@@ -103,10 +108,10 @@ class TagEditor(QAbstractTableModel):
 
     def __init__(self):
         super().__init__()
-        # list[TagItem]
-        self.__data = []
-        # list[bool]
-        self.__edit_tags = []
+
+        self.__data: list[TagItem] = []
+        # 元数据修改标志
+        self.__edit_tags: list[bool] = []
 
     def rowCount(self, parent=QModelIndex()) -> int:
         return len(self.__data)
@@ -120,15 +125,17 @@ class TagEditor(QAbstractTableModel):
         if role == Qt.TextAlignmentRole:
             return Qt.AlignLeft
         elif role == Qt.FontRole:
-            if self.__edit_tags[index.row()]:
+            if self.__edit_tags[index.row()] or self.__data[index.row()].new_path:
                 font = QFont()
                 font.setBold(True)
                 return font
         elif role == Qt.DisplayRole:
             if index.column() == 0:
+                if self.__data[index.row()].new_path:
+                    return "* " + os.path.basename(self.__data[index.row()].new_path)
                 if self.__edit_tags[index.row()]:
-                    return "* " + os.path.basename(self.__data[index.row()].file)
-                return os.path.basename(self.__data[index.row()].file)
+                    return "* " + os.path.basename(self.__data[index.row()].path)
+                return os.path.basename(self.__data[index.row()].path)
             elif index.column() == 1:
                 return self.__data[index.row()].metadata.title
             elif index.column() == 2:
@@ -138,7 +145,7 @@ class TagEditor(QAbstractTableModel):
             elif index.column() == 4:
                 return self.__data[index.row()].metadata.album_artist
             elif index.column() == 5:
-                return str(self.__data[index.row()].metadata.date)
+                return str(self.__data[index.row()].metadata.year)
             elif index.column() == 6:
                 return self.__data[index.row()].metadata.disk_number
             elif index.column() == 7:
@@ -243,7 +250,12 @@ class TagEditor(QAbstractTableModel):
         self.insert_file(i2, obj1, flag1)
 
     def edit_file(self, index: int, data: Metadata):
-
+        """
+        编辑元数据
+        :param index: 索引
+        :param data: 新元数据
+        :return:
+        """
         self.__data[index].metadata.copy_metadata(data)
         self.__edit_tags[index] = True
 
@@ -252,6 +264,55 @@ class TagEditor(QAbstractTableModel):
         bottom_right = QModelIndex()
         bottom_right.sibling(index, len(self.tag_title) - 1)
         self.dataChanged.emit(top_left, bottom_right)
+
+    def edit_file_name(self, index: int, fmt: str):
+        """
+        重命名文件
+        :param index: 索引
+        :param fmt: 格式
+        :return:
+        """
+        if fmt.strip() == "":
+            return
+
+        item = self.__data[index]
+        fmt = fmt.replace("%{title}", item.metadata.title)
+        fmt = fmt.replace("%{artist}", item.metadata.artist)
+        fmt = fmt.replace("%{album_artist}", item.metadata.album_artist)
+        fmt = fmt.replace("%{album}", item.metadata.album)
+        fmt = fmt.replace("%{year}", item.metadata.year)
+        fmt = fmt.replace("%{disk}", "%02d" % (int(item.metadata.disk_number) if item.metadata.disk_number else 0))
+        fmt = fmt.replace("%{track}", "%02d" % (int(item.metadata.track_number) if item.metadata.track_number else 0))
+        fmt = fmt.replace("%{genre}", item.metadata.genre)
+        fmt = fmt.replace("%{comment}", item.metadata.comment)
+
+        if fmt.strip() == "":
+            raise ThtException("Get empty file name when rename file \"%s\"" % os.path.basename(item.path))
+
+        item.new_path = os.path.join(item.parent_path, "%s.%s" % (fmt, item.format))
+
+        top_left = QModelIndex()
+        top_left.sibling(index, 0)
+        bottom_right = QModelIndex()
+        bottom_right.sibling(index, 0)
+        self.dataChanged.emit(top_left, bottom_right)
+
+    def save_files(self):
+        try:
+            for i in range(len(self.__data)):
+                if not self.__edit_tags[i]:
+                    continue
+                # 保存更改
+
+                # self.__edit_tags[i] = False
+
+                top_left = QModelIndex()
+                top_left.sibling(i, 0)
+                bottom_right = QModelIndex()
+                bottom_right.sibling(i, len(self.tag_title) - 1)
+                self.dataChanged.emit(top_left, bottom_right)
+        except Exception:
+            raise ThtException("Error occur while saving changes:\n" + traceback.format_exc())
 
     def count(self) -> int:
         return len(self.__data)

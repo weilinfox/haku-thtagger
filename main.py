@@ -29,3 +29,4 @@ if __name__ == "__main__":
                                  QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
         else:
             print(e)
+        print("Handle exception")
