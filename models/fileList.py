@@ -2,19 +2,8 @@ import os
 
 from PySide6.QtCore import QStringListModel
 
+from .tagEditor import is_supported
 from .thtException import ThtException
-
-
-def _check_support(p: str) -> bool:
-    """
-    支持文件格式
-    :param p: 文件路径
-    :return: bool
-    """
-    suffix = os.path.splitext(p)[1]
-    if len(suffix) > 0:
-        suffix = suffix[1:]
-    return suffix.lower() in ["mp3", "flac", "wav"]
 
 
 class FileList:
@@ -24,30 +13,32 @@ class FileList:
         self.__fullPathList = []
         self.__listModel = QStringListModel()
 
-    def add(self, path: str):
+    def add(self, path: str) -> list[str]:
         """
         添加目录
         :param path: 目录路径
-        :return:
+        :return: 新加文件列表
         """
         if os.path.isdir(path):
             if path in self.__pathList:
-                raise ThtException("Folder already imported")
+                raise ThtException("Folder already opened")
             file_list = os.listdir(path)
         else:
-            return
+            return []
 
         support_list = []
         support_full_list = []
         for p in file_list:
             full_p = os.path.join(path, p)
-            if os.path.isfile(full_p) and _check_support(p):
+            if os.path.isfile(full_p) and is_supported(p):
                 support_list.append(p)
-                support_full_list.append(full_p)
+        support_list.sort()
+        for p in support_list:
+            full_p = os.path.join(path, p)
+            support_full_list.append(full_p)
 
         if len(support_list) == 0:
             raise ThtException("No Supported file found")
-        support_list.sort()
 
         self.__pathList.append(path)
         for f in support_list:
@@ -55,6 +46,8 @@ class FileList:
         for f in support_full_list:
             self.__fullPathList.append(f)
         self.update_list()
+
+        return support_full_list
 
     def get_list(self) -> list:
         """
@@ -70,15 +63,23 @@ class FileList:
         """
         self.__listModel.setStringList(self.__fileList)
 
-    def reload(self):
+    def reload(self) -> list[str]:
         """
         重载所有路径
         :return:
         """
         old_list = self.__pathList.copy()
+        new_list = []
         self.clear()
         for p in old_list:
-            self.add(p)
+            try:
+                nl = self.add(p)
+            except ThtException:
+                pass
+            else:
+                for i in nl:
+                    new_list.append(i)
+        return new_list
 
     def clear(self):
         """

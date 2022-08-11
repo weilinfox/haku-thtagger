@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QMainWindow, QListView, QAbstractItemView, QFileDi
 
 import ui
 from ui.ui_MainWindow import Ui_MainWindow
-from models import fileList, metadata
+from models import fileList, metadata, tagEditor
 from models.thtException import ThtException
 
 _app_name = "thtagger %s" % ui.__version__
@@ -34,6 +34,9 @@ class MainWindow(QMainWindow):
         # http 请求线程
         self.__source_search_lock = threading.Lock()
         self.__source_search_thread = None
+
+        # tag 表格 model
+        self.__tag_editor = tagEditor.TagEditor()
 
         self.bind()
 
@@ -77,6 +80,14 @@ class MainWindow(QMainWindow):
         self.ui.albumCoverLable.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
         self.ui.albumCover.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
 
+        # tag area
+        self.ui.tagTableView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.ui.tagTableView.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.ui.tagTableView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.ui.tagTableView.setModel(self.__tag_editor)
+        self.ui.tagTableView.resizeColumnsToContents()
+        self.ui.tagTableView.resizeRowsToContents()
+
     def on_file_select(self):
         """
         导入目录
@@ -100,23 +111,29 @@ class MainWindow(QMainWindow):
             if len(filelist) > 0:
                 self.ui.fileSelectText.setText(filelist[0])
                 try:
-                    self.__fileList.add(filelist[0])
+                    file_list = self.__fileList.add(filelist[0])
                 except ThtException as e:
                     # print(e)
                     QMessageBox.warning(self, "Thtagger Exception", str(e),
                                         QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
                 else:
                     self.ui.infoSearchKeyText.setText(os.path.basename(filelist[0]))
+                    for f in file_list:
+                        self.__tag_editor.add_file(f)
+                    self.ui.tagTableView.resizeColumnsToContents()
+                    self.ui.tagTableView.resizeRowsToContents()
 
     def on_file_reload(self):
         """
         目录重载
         :return:
         """
-        try:
-            self.__fileList.reload()
-        except ThtException:
-            pass
+        file_list = self.__fileList.reload()
+        self.__tag_editor.clear_file()
+        for f in file_list:
+            self.__tag_editor.add_file(f)
+        self.ui.tagTableView.resizeColumnsToContents()
+        self.ui.tagTableView.resizeRowsToContents()
 
     def on_file_delete(self):
         """
@@ -130,6 +147,7 @@ class MainWindow(QMainWindow):
                 self.ui.fileListView.setCurrentIndex(selected[0])
             else:
                 self.ui.fileListView.setCurrentIndex(selected[0].siblingAtRow(selected[0].row()-1))
+            self.__tag_editor.remove_file(selected[0].row())
 
     def on_file_move(self, direction: int):
         """
@@ -144,6 +162,8 @@ class MainWindow(QMainWindow):
             index = selected[0].row()
             dest = self.__fileList.swap(index, index + direction)
             self.ui.fileListView.setCurrentIndex(selected[0].siblingAtRow(dest))
+            self.__tag_editor.swap_file(index, index + direction)
+            self.ui.tagTableView.resizeRowsToContents()
 
     def on_source_changed(self):
         """

@@ -8,15 +8,35 @@ from utils import localDb, remoteDb
 
 
 class Metadata:
-    def __init__(self, title=""):
-        self.title = title
+    def __init__(self):
+        self.length = 0.0
+        self.bitrate = 0
+        self.channels = 0
+        self.sample_rate = 0
+        # wave only
+        self.bits_per_sample = 0
+        # mp3 only
+        self.bitrate_mode = ""
+
+        # TIT2
+        self.title = ""
+        # TPE1
         self.artist = ""
+        # TPE2
+        self.circle = ""
+        # TALB
         self.album = ""
+        # TDRC
         self.date = ""
+        # TPOS
         self.disk_number = ""
+        # TRCK
         self.track_number = ""
+        # TCON
         self.genre = ""
-        self.cover = ""
+        # APIC COVER_FRONT
+        self.cover_file = ""
+        # COMM
         self.comment = ""
 
 
@@ -29,7 +49,7 @@ class MetadataTableModel(QAbstractTableModel):
     def rowCount(self, parent=QModelIndex()) -> int:
         if self.__data is None:
             return 0
-        return len(self.__data)-1
+        return len(self.__data) - 1
 
     def columnCount(self, parent=QModelIndex()) -> int:
         if self.__data is None:
@@ -42,7 +62,7 @@ class MetadataTableModel(QAbstractTableModel):
         if role == Qt.TextAlignmentRole:
             return Qt.AlignLeft
         elif role == Qt.DisplayRole:
-            return str(self.__data[index.row()+1][index.column()])
+            return str(self.__data[index.row() + 1][index.column()])
         return None
 
     def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
