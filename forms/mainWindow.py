@@ -2,7 +2,8 @@
 import os
 import threading
 
-from PySide6.QtCore import QThread, QAbstractTableModel
+from PySide6.QtCore import QThread, QSize, Qt
+from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QMainWindow, QListView, QAbstractItemView, QFileDialog
 
 import ui
@@ -71,6 +72,10 @@ class MainWindow(QMainWindow):
         self.ui.infoTableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.ui.infoTableView.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.ui.infoTableView.doubleClicked.connect(self.on_source_album_selected)
+        self.ui.infoTableView.clicked.connect(self.on_source_metadata_selected)
+
+        self.ui.albumCoverLable.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+        self.ui.albumCover.setAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
 
     def on_file_select(self):
         """
@@ -167,6 +172,9 @@ class MainWindow(QMainWindow):
         从 source 获取专辑信息
         :return:
         """
+        self.ui.infoTableView.setModel(None)
+        self.ui.albumCover.setText("No image")
+        self.ui.albumCoverLable.clear()
         index = self.ui.infoSourceCombo.currentIndex()
         key = self.ui.infoSearchKeyText.text()
         # 在新线程中处理请求
@@ -216,7 +224,7 @@ class MainWindow(QMainWindow):
         if len(index) == 0:
             return
         index = index[0].row() + 1
-        print(self.__source_metadata_req.get_source_album_list()[0][index])
+        # print(self.__source_metadata_req.get_source_album_list()[0][index])
 
         self.__source_metadata_req.set_key(self.__source_metadata_req.get_source_album_list()[1][index])
 
@@ -238,8 +246,33 @@ class MainWindow(QMainWindow):
         """
         if self.__source_metadata_req.get_status() != 2:
             return
-        print(self.__source_metadata_req.get_source_metadata_list())
+
+        # 在表格中显示
+        self.ui.infoTableView.setModel(self.__source_metadata_req.get_source_table_model())
+        self.ui.infoTableView.resizeColumnsToContents()
+        self.ui.infoTableView.resizeRowsToContents()
+
         self.stop_source_request_thread()
+
+    def on_source_metadata_selected(self):
+        """
+        选中曲目
+        :return:
+        """
+        if self.__source_metadata_req.get_status() != 2:
+            return
+        index = self.ui.infoTableView.selectedIndexes()
+        if len(index) == 0:
+            return
+        index = index[0].row() + 1
+        cover_file = self.__source_metadata_req.get_source_metadata_list()[1][index][0]
+        image = QImage(cover_file)
+        pixmap = QPixmap.fromImage(image)
+        height, width = self.ui.albumCover.height(), self.ui.albumCover.width()
+        p_height, p_width = pixmap.height(), pixmap.width()
+        pixmap = pixmap.scaled(QSize(width, height), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.ui.albumCover.setPixmap(pixmap)
+        self.ui.albumCoverLable.setText("%d x %d" % (p_width, p_height))
 
     def on_source_exception(self, exception: ThtException):
         """

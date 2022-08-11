@@ -336,7 +336,7 @@
        </size>
       </property>
       <property name="title">
-       <string>Album information</string>
+       <string>Tag information</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

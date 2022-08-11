@@ -12,11 +12,12 @@ class Metadata:
         self.title = title
         self.artist = ""
         self.album = ""
-        self.comment = ""
         self.date = ""
+        self.disk_number = ""
         self.track_number = ""
         self.genre = ""
         self.cover = ""
+        self.comment = ""
 
 
 class MetadataTableModel(QAbstractTableModel):
@@ -68,12 +69,13 @@ class MetadataReq(QObject):
         self.__status = 0
         # album 查询结果 tuple(list[<界面显示数据>], list[<metadata 查询数据>]) 首元素为标题
         self.__source_album_list = ()
-        # metadata 查询结果 list[class metadata]
-        self.__source_metadata_list = []
+        # metadata 查询结果
+        # tuple(list[(title, artist, album, date, diskno, trackno, genre, comment)], list[(cover)]) 首元素为标题
+        self.__source_metadata_list = ()
 
         self.__source_table_model = None
 
-    def to_main_thread(self):
+    def __to_main_thread(self):
         self.moveToThread(QApplication.instance().thread())
 
     def search_album(self):
@@ -95,7 +97,7 @@ class MetadataReq(QObject):
         except Exception:
             self.exception_raise.emit(ThtException(traceback.format_exc()))
         finally:
-            self.to_main_thread()
+            self.__to_main_thread()
 
     def search_metadata(self):
         try:
@@ -103,6 +105,7 @@ class MetadataReq(QObject):
                 self.__source_metadata_list = remoteDb.thb_get_metadata(self.__key)
             else:
                 return
+            self.__source_table_model = MetadataTableModel(self.__source_metadata_list[0])
             self.__status = 2
             self.metadata_search_finished.emit()
         except requests.Timeout:
@@ -112,7 +115,7 @@ class MetadataReq(QObject):
         except Exception:
             self.exception_raise.emit(ThtException(traceback.format_exc()))
         finally:
-            self.to_main_thread()
+            self.__to_main_thread()
 
     def set_key(self, key: str):
         self.__key = key

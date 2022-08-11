@@ -287,7 +287,7 @@ class Ui_MainWindow(object):
         self.fileRenameCheck.setText(QCoreApplication.translate("MainWindow", u"Rename", None))
         self.albumCoverLable.setText("")
         self.albumCover.setText(QCoreApplication.translate("MainWindow", u"No image", None))
-        self.tagGroup.setTitle(QCoreApplication.translate("MainWindow", u"Album information", None))
+        self.tagGroup.setTitle(QCoreApplication.translate("MainWindow", u"Tag information", None))
         self.tagImportButton.setText(QCoreApplication.translate("MainWindow", u"Import", None))
         self.tagSaveButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.menuSource.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
