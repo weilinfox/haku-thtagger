@@ -285,7 +285,23 @@ class MainWindow(QMainWindow):
         self.ui.infoTableView.resizeColumnsToContents()
         self.ui.infoTableView.resizeRowsToContents()
 
+        # 显示专辑封面 list[(cover), ]
+        try:
+            cover_file = self.__source_metadata_req.get_source_metadata_list()[1][1][0]
+            self.__cover_image_show(cover_file)
+        except Exception:
+            pass
+
         self.stop_source_request_thread()
+
+    def __cover_image_show(self, file: str):
+        image = QImage(file)
+        pixmap = QPixmap.fromImage(image)
+        height, width = self.ui.albumCover.height(), self.ui.albumCover.width()
+        p_height, p_width = pixmap.height(), pixmap.width()
+        pixmap = pixmap.scaled(QSize(width, height), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.ui.albumCover.setPixmap(pixmap)
+        self.ui.albumCoverLable.setText("%d x %d" % (p_width, p_height))
 
     def on_source_metadata_selected(self):
         """
@@ -299,13 +315,7 @@ class MainWindow(QMainWindow):
             return
         index = index[0].row() + 1
         cover_file = self.__source_metadata_req.get_source_metadata_list()[1][index][0]
-        image = QImage(cover_file)
-        pixmap = QPixmap.fromImage(image)
-        height, width = self.ui.albumCover.height(), self.ui.albumCover.width()
-        p_height, p_width = pixmap.height(), pixmap.width()
-        pixmap = pixmap.scaled(QSize(width, height), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.ui.albumCover.setPixmap(pixmap)
-        self.ui.albumCoverLable.setText("%d x %d" % (p_width, p_height))
+        self.__cover_image_show(cover_file)
 
     def on_source_exception(self, exception: ThtException):
         """

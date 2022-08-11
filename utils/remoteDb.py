@@ -1,10 +1,10 @@
 import hashlib
 import os
-
 import requests
 
-root_dir = os.path.dirname(os.path.dirname(__file__))
-cache_dir = os.path.join(root_dir, "cache")
+from .cache import get_cache_path
+
+cache_dir = get_cache_path()
 
 
 def thb_search_album(key: str) -> tuple:

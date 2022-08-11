@@ -7,11 +7,11 @@ import traceback
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from forms.mainWindow import MainWindow
+import utils.cache
 
 
 if __name__ == "__main__":
-    root_dir = os.path.dirname(__file__)
-    cache_dir = os.path.join(root_dir, "cache")
+    cache_dir = utils.cache.get_cache_path()
     if not os.path.exists(cache_dir):
         os.mkdir(cache_dir, 0o755)
 
