@@ -4,7 +4,7 @@ import threading
 
 from PySide6.QtCore import QThread, QSize, Qt
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QMainWindow, QListView, QAbstractItemView, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
 
 import ui
 from ui.ui_MainWindow import Ui_MainWindow
@@ -102,7 +102,9 @@ class MainWindow(QMainWindow):
                 try:
                     self.__fileList.add(filelist[0])
                 except ThtException as e:
-                    print(e)
+                    # print(e)
+                    QMessageBox.warning(self, "Thtagger Exception", str(e),
+                                        QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
                 else:
                     self.ui.infoSearchKeyText.setText(os.path.basename(filelist[0]))
 
@@ -277,10 +279,11 @@ class MainWindow(QMainWindow):
     def on_source_exception(self, exception: ThtException):
         """
         搜索字线程异常捕获
-        :param exception:
+        :param exception: ThtException 异常
         :return:
         """
-        print(exception)
+        QMessageBox.warning(self, "Thtagger Exception", str(exception),
+                            QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
         self.stop_source_request_thread()
 
     def on_json_load(self, key: str):
