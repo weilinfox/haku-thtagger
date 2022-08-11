@@ -66,39 +66,38 @@ class TagItem:
             self.metadata.sample_rate = self.mutagen_file.info.sample_rate
             self.metadata.bits_per_sample = self.mutagen_file.info.bits_per_sample
 
-        obj = self.mutagen_file.tags.get('TIT2')
-        if obj is not None:
-            self.metadata.title = obj.text[0]
-        obj = self.mutagen_file.tags.get('TPE1')
-        if obj is not None:
-            self.metadata.artist = obj.text[0]
-        obj = self.mutagen_file.tags.get('TPE2')
-        if obj is not None:
-            self.metadata.circle = obj.text[0]
-        obj = self.mutagen_file.tags.get('TALB')
-        if obj is not None:
-            self.metadata.album = obj.text[0]
-        obj = self.mutagen_file.tags.get('TDRC')
-        if obj is not None:
-            self.metadata.date = obj.text[0]
-        obj = self.mutagen_file.tags.get('TPOS')
-        if obj is not None:
-            self.metadata.disk_number = obj.text[0]
-        obj = self.mutagen_file.tags.get('TRCK')
-        if obj is not None:
-            self.metadata.track_number = obj.text[0]
-        obj = self.mutagen_file.tags.get('TCON')
-        if obj is not None:
-            self.metadata.genre = obj.text[0]
-        obj = self.mutagen_file.tags.get('COMM')
-        if obj is not None:
-            self.metadata.comment = obj.text[0]
+        if self.mutagen_file.tags is not None:
+            obj = self.mutagen_file.tags.get('TIT2')
+            if obj is not None:
+                self.metadata.title = obj.text[0]
+            obj = self.mutagen_file.tags.get('TPE1')
+            if obj is not None:
+                self.metadata.artist = obj.text[0]
+            obj = self.mutagen_file.tags.get('TPE2')
+            if obj is not None:
+                self.metadata.album_artist = obj.text[0]
+            obj = self.mutagen_file.tags.get('TALB')
+            if obj is not None:
+                self.metadata.album = obj.text[0]
+            obj = self.mutagen_file.tags.get('TDRC')
+            if obj is not None:
+                self.metadata.date = obj.text[0]
+            obj = self.mutagen_file.tags.get('TPOS')
+            if obj is not None:
+                self.metadata.disk_number = obj.text[0]
+            obj = self.mutagen_file.tags.get('TRCK')
+            if obj is not None:
+                self.metadata.track_number = obj.text[0]
+            obj = self.mutagen_file.tags.get('TCON')
+            if obj is not None:
+                self.metadata.genre = obj.text[0]
+            obj = self.mutagen_file.tags.get('COMM')
+            if obj is not None:
+                self.metadata.comment = obj.text[0]
 
 
 class TagEditor(QAbstractTableModel):
-    data_updated = Signal()
-
-    tag_title = ("File", "Title", "Artist", "Album", "Circle", "Date", "Disk no", "Track no", "Genre", "Comment",
+    tag_title = ("File", "Title", "Artist", "Album", "Album artist", "Year", "Disk no", "Track no", "Genre", "Comment",
                  "Length", "Bitrate", "Channels", "Sample rate", "Bits per sample", "Bitrate mode")
 
     def __init__(self):
@@ -127,7 +126,7 @@ class TagEditor(QAbstractTableModel):
             elif index.column() == 3:
                 return self.__data[index.row()].metadata.album
             elif index.column() == 4:
-                return self.__data[index.row()].metadata.circle
+                return self.__data[index.row()].metadata.album_artist
             elif index.column() == 5:
                 return str(self.__data[index.row()].metadata.date)
             elif index.column() == 6:
@@ -209,7 +208,7 @@ class TagEditor(QAbstractTableModel):
         清空文件
         :return:
         """
-        self.beginRemoveRows(QModelIndex(), 0, len(self.__data)-1)
+        self.beginRemoveRows(QModelIndex(), 0, len(self.__data) - 1)
         self.__data.clear()
         self.endRemoveRows()
 
@@ -228,3 +227,16 @@ class TagEditor(QAbstractTableModel):
         self.insert_file(i1, obj2)
         self.remove_file(i2)
         self.insert_file(i2, obj1)
+
+    def edit_file(self, index: int, data: Metadata):
+
+        self.__data[index].metadata.copy_metadata(data)
+
+        top_left = QModelIndex()
+        top_left.sibling(index, 0)
+        bottom_right = QModelIndex()
+        bottom_right.sibling(index, len(self.tag_title) - 1)
+        self.dataChanged.emit(top_left, bottom_right)
+
+    def count(self) -> int:
+        return len(self.__data)

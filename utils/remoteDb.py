@@ -53,7 +53,7 @@ def thb_get_metadata(key: str) -> tuple:
         "d": "kv",
         "o": 1,
         "s": "/",
-        "f": "alname event year coverurl",
+        "f": "alname circle event year coverurl",
         "p": "name discno trackno artist ogmusic",
         "a": key
     }
@@ -67,6 +67,7 @@ def thb_get_metadata(key: str) -> tuple:
             alname = ans[0]["alname"]
             genre = ans[0]['event']
             date = ans[0]["year"]
+            circle = ans[0]["circle"]
             cover_url = ans[0]['coverurl']
             file_name = hashlib.md5(cover_url.encode("utf-8")).hexdigest()
             file_name += "_" + os.path.basename(cover_url)
@@ -77,10 +78,10 @@ def thb_get_metadata(key: str) -> tuple:
                 with open(file_path, "wb") as fp:
                     fp.write(res.content)
             for k in ans[1].values():
-                ans_list.append((k["name"], k["artist"], alname, date, k["discno"], k["trackno"],
+                ans_list.append((k["name"], k["artist"], alname, circle, date, k["discno"], k["trackno"],
                                  genre, k["ogmusic"], file_path))
             ans_list.sort(key=lambda x: (int(x[4]), int(x[5])))
-            ans_list.insert(0, ("Title", "Artist", "Album", "Date", "Disk no", "Track no",
+            ans_list.insert(0, ("Title", "Artist", "Album", "Album artist", "Year", "Disk no", "Track no",
                                 "Genre", "Comment", "Cover"))
             for i in range(len(ans_list)):
                 ans_covers.append(ans_list[i][-1:])

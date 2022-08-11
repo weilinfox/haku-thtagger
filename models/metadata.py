@@ -23,7 +23,7 @@ class Metadata:
         # TPE1
         self.artist = ""
         # TPE2
-        self.circle = ""
+        self.album_artist = ""
         # TALB
         self.album = ""
         # TDRC
@@ -38,6 +38,18 @@ class Metadata:
         self.cover_file = ""
         # COMM
         self.comment = ""
+
+    def copy_metadata(self, new_data):
+        self.title = new_data.title
+        self.artist = new_data.artist
+        self.album_artist = new_data.album_artist
+        self.album = new_data.album
+        self.date = new_data.date
+        self.disk_number = new_data.disk_number
+        self.track_number = new_data.track_number
+        self.genre = new_data.genre
+        self.cover_file = new_data.cover_file
+        self.comment = new_data.comment
 
 
 class MetadataTableModel(QAbstractTableModel):
@@ -90,7 +102,8 @@ class MetadataReq(QObject):
         # album 查询结果 tuple(list[<界面显示数据>], list[<metadata 查询数据>]) 首元素为标题
         self.__source_album_list = ()
         # metadata 查询结果
-        # tuple(list[(title, artist, album, date, diskno, trackno, genre, comment)], list[(cover)]) 首元素为标题
+        # tuple(list[(title, artist, album, album artist, year, diskno, trackno, genre, comment)], list[(cover)])
+        # 首元素为标题
         self.__source_metadata_list = ()
 
         self.__source_table_model = None
@@ -151,3 +164,18 @@ class MetadataReq(QObject):
 
     def get_source_table_model(self):
         return self.__source_table_model
+
+    def generate_metadata_list(self) -> list[Metadata]:
+        data_list = []
+        # list[(title, artist, album, album artist, year, diskno, trackno, genre, comment)
+        list1 = self.__source_metadata_list[0]
+        # list[(cover)]
+        list2 = self.__source_metadata_list[1]
+        for i in range(1, len(list1)):
+            metadata = Metadata()
+            metadata.title, metadata.artist, metadata.album, metadata.album_artist, metadata.date = list1[i][:5]
+            metadata.disk_number, metadata.track_number, metadata.genre, metadata.comment = list1[i][5:]
+            metadata.cover_file = list2[i][0]
+            data_list.append(metadata)
+
+        return data_list

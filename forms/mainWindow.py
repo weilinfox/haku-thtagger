@@ -88,6 +88,8 @@ class MainWindow(QMainWindow):
         self.ui.tagTableView.resizeColumnsToContents()
         self.ui.tagTableView.resizeRowsToContents()
 
+        self.ui.tagImportButton.clicked.connect(self.on_tag_import_source)
+
     def on_file_select(self):
         """
         导入目录
@@ -307,7 +309,7 @@ class MainWindow(QMainWindow):
 
     def on_source_exception(self, exception: ThtException):
         """
-        搜索字线程异常捕获
+        搜索子线程异常捕获
         :param exception: ThtException 异常
         :return:
         """
@@ -316,7 +318,7 @@ class MainWindow(QMainWindow):
         self.ui.infoTableView.setEnabled(True)
         self.stop_source_request_thread()
 
-    def on_json_load(self, key: str):
+    def on_source_json_load(self, key: str):
         """
         选取本地 json 专辑信息
         :param key: 旧路径
@@ -334,6 +336,19 @@ class MainWindow(QMainWindow):
             filelist = dialog.selectedFiles()
             if len(filelist) > 0:
                 self.ui.infoSearchKeyText.setText(filelist[0])
+
+    def on_tag_import_source(self):
+        """
+        导入 source 元数据
+        :return:
+        """
+        if self.__source_metadata_req.get_status() != 2:
+            return
+        ans = self.__source_metadata_req.generate_metadata_list()
+
+        for i in range(min(self.__tag_editor.count(), len(ans))):
+            self.__tag_editor.edit_file(i, ans[i])
+        self.ui.tagTableView.resizeColumnsToContents()
 
     def on_rename_check(self):
         """
