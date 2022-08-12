@@ -10,7 +10,7 @@ import mutagen._riff
 from mutagen._util import loadfile
 
 from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QPixmap, QImage
 
 from .metadata import Metadata
 from .thtException import ThtException
@@ -99,7 +99,7 @@ class TagItem:
             self.__metadata.comment = self.__get_tag_id3_field("COMM")
         elif suffix == self.flac:
             # Vorbis comment
-            print(self.__mutagen_file.tags)
+            # print(self.__mutagen_file.tags)
             vorbis_dict = {}
             if isinstance(self.__mutagen_file.tags, list):
                 for f in self.__mutagen_file.tags:
@@ -138,10 +138,10 @@ class TagItem:
     def save_metadata(self):
         if not self.__new_metadata:
             return
+        cover_mime = mimetypes.guess_type(self.__metadata.cover_file)[0]
+        with open(self.__metadata.cover_file, "rb") as f:
+            cover_data = f.read()
         if self.__format == self.mp3 or self.__format == self.wav:
-            cover_mime = mimetypes.guess_type(self.__metadata.cover_file)[0]
-            with open(self.__metadata.cover_file, "rb") as f:
-                cover_data = f.read()
             if self.__mutagen_file.tags is None:
                 self.__mutagen_file.tags = mutagen.id3.ID3()
             self.__mutagen_file.tags.setall("TIT2", [mutagen.id3.TIT2(encodings=3, text=self.__metadata.title)])
@@ -175,6 +175,18 @@ class TagItem:
             self.__mutagen_file.tags.update({"TRACKNUMBER": self.__metadata.track_number})
             self.__mutagen_file.tags.update({"GENRE": self.__metadata.genre})
             self.__mutagen_file.tags.update({"COMMENT": self.__metadata.comment})
+            self.__mutagen_file.tags.update({"ENCODER": "Thtagger with Mutagen"})
+
+            self.__mutagen_file.clear_pictures()
+            image = QImage(self.__metadata.cover_file)
+            pixmap = QPixmap(image)
+            picture = mutagen.flac.Picture()
+            picture.type = mutagen.id3.PictureType.COVER_FRONT
+            picture.mime = cover_mime
+            picture.data = cover_data
+            picture.height, picture.width, picture.depth = pixmap.height(), pixmap.width(), pixmap.depth()
+            self.__mutagen_file.add_picture(picture)
+
             self.__mutagen_file.save()
 
         self.__new_metadata = False
