@@ -88,6 +88,7 @@ class MainWindow(QMainWindow):
         self.ui.tagTableView.setModel(self.__tag_editor)
         self.ui.tagTableView.resizeColumnsToContents()
         self.ui.tagTableView.resizeRowsToContents()
+        self.ui.tagTableView.clicked.connect(self.on_tag_selected)
 
         self.ui.tagImportButton.clicked.connect(self.on_tag_import_source)
         self.ui.tagSaveButton.clicked.connect(self.on_tag_save)
@@ -296,8 +297,16 @@ class MainWindow(QMainWindow):
 
         self.stop_source_request_thread()
 
-    def __cover_image_show(self, file: str):
-        image = QImage(file)
+    def __cover_image_show(self, file):
+        if not file:
+            return
+        if isinstance(file, str):
+            image = QImage(file)
+        elif isinstance(file, bytes):
+            image = QImage()
+            image.loadFromData(file)
+        else:
+            return
         pixmap = QPixmap.fromImage(image)
         height, width = self.ui.albumCover.height(), self.ui.albumCover.width()
         p_height, p_width = pixmap.height(), pixmap.width()
@@ -381,6 +390,15 @@ class MainWindow(QMainWindow):
                                     QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
 
         self.ui.tagTableView.resizeColumnsToContents()
+
+    def on_tag_selected(self):
+        index = self.ui.tagTableView.selectedIndexes()
+        if len(index):
+            mtd = self.__tag_editor.get_data(index[0].row()).get_metadata()
+            data = mtd.cover_file
+            if not data:
+                data = mtd.cover_extract
+            self.__cover_image_show(data)
 
     def on_tag_save(self):
         try:

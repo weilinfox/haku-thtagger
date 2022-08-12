@@ -97,6 +97,11 @@ class TagItem:
             self.__metadata.track_number = self.__get_tag_id3_field("TRCK")
             self.__metadata.genre = self.__get_tag_id3_field("TCON")
             self.__metadata.comment = self.__get_tag_id3_field("COMM")
+
+            if self.__mutagen_file.tags is not None:
+                picture = self.__mutagen_file.tags.getall("APIC")
+                if picture:
+                    self.__metadata.cover_extract = picture[0].data
         elif suffix == self.flac:
             # Vorbis comment
             # print(self.__mutagen_file.tags)
@@ -116,6 +121,9 @@ class TagItem:
             self.__metadata.track_number = self.__get_tag_vorbis_field(vorbis_dict, "TRACKNUMBER")
             self.__metadata.genre = self.__get_tag_vorbis_field(vorbis_dict, "GENRE")
             self.__metadata.comment = self.__get_tag_vorbis_field(vorbis_dict, "COMMENT")
+
+            if self.__mutagen_file.pictures:
+                self.__metadata.cover_extract = self.__mutagen_file.pictures[0].data
 
     def __get_tag_id3_field(self, field: str) -> str:
         if self.__mutagen_file.tags is None:
@@ -484,3 +492,6 @@ class TagEditor(QAbstractTableModel):
         :return: 总数
         """
         return len(self.__data)
+
+    def get_data(self, index: int):
+        return self.__data[index]

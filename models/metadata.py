@@ -40,6 +40,9 @@ class Metadata:
         # COMM  %{comment}      ICMT    COMMENT
         self.comment = ""
 
+        # cover extracted from file
+        self.cover_extract = None
+
     def copy_metadata(self, new_data):
         self.title = new_data.title
         self.artist = new_data.artist
