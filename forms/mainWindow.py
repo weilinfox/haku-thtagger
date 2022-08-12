@@ -116,14 +116,14 @@ class MainWindow(QMainWindow):
                 self.ui.fileSelectText.setText(filelist[0])
                 try:
                     file_list = self.__fileList.add(filelist[0])
+                    self.ui.infoSearchKeyText.setText(os.path.basename(filelist[0]))
+                    for f in file_list:
+                        self.__tag_editor.add_file(f)
                 except ThtException as e:
                     # print(e)
                     QMessageBox.warning(self, "Thtagger Exception", str(e),
                                         QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
                 else:
-                    self.ui.infoSearchKeyText.setText(os.path.basename(filelist[0]))
-                    for f in file_list:
-                        self.__tag_editor.add_file(f)
                     self.ui.tagTableView.resizeColumnsToContents()
                     self.ui.tagTableView.resizeRowsToContents()
 
@@ -354,26 +354,31 @@ class MainWindow(QMainWindow):
         按规则重命名 并 导入 source 元数据
         :return:
         """
-        # 重命名
-        fmt = ""
-        if self.ui.fileRenameCheck.isChecked():
-            fmt = self.ui.fileRenameText.text()
-        for i in range(self.__tag_editor.count()):
-            try:
-                self.__tag_editor.edit_file_name(i, fmt)
-            except ThtException as e:
-                QMessageBox.warning(self, "Thtagger Exception", str(e),
-                                    QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
-            except Exception:
-                QMessageBox.critical(self, "Unhandled Exception", traceback.format_exc(),
-                                     QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
-
         # 元数据修改
         if self.__source_metadata_req is not None and self.__source_metadata_req.get_status() == 2:
             ans = self.__source_metadata_req.generate_metadata_list()
 
             for i in range(min(self.__tag_editor.count(), len(ans))):
                 self.__tag_editor.edit_file(i, ans[i])
+
+        # 重命名
+        fmt = ""
+        if self.ui.fileRenameCheck.isChecked():
+            fmt = self.ui.fileRenameText.text()
+            # 不允许的字符
+            if fmt.count('/') or fmt.count('\\'):
+                fmt = ""
+                QMessageBox.warning(self, "Thtagger Exception", "File name with \"/\" or \"\\\" in is not supported",
+                                    QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+                self.ui.fileRenameCheck.setChecked(False)
+                self.ui.fileRenameText.setEnabled(False)
+
+        for i in range(self.__tag_editor.count()):
+            try:
+                self.__tag_editor.edit_file_name(i, fmt)
+            except ThtException as e:
+                QMessageBox.warning(self, "Thtagger Exception", str(e),
+                                    QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
 
         self.ui.tagTableView.resizeColumnsToContents()
 

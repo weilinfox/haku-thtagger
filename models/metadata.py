@@ -18,25 +18,25 @@ class Metadata:
         # mp3 only
         self.bitrate_mode = ""
 
-        # TIT2 %{title}
+        # TIT2 %{title}         INAM
         self.title = ""
-        # TPE1 %{artist}
+        # TPE1 %{artist}        IART
         self.artist = ""
         # TPE2 %{album_artist}
         self.album_artist = ""
-        # TALB %{album}
+        # TALB %{album}         IPRD
         self.album = ""
-        # TDRC %{year}
+        # TDRC %{year}          ICRD
         self.year = ""
         # TPOS %{disk}
         self.disk_number = ""
-        # TRCK %{track}
+        # TRCK %{track}         ITRK
         self.track_number = ""
-        # TCON %{genre}
+        # TCON %{genre}         IGNR
         self.genre = ""
         # APIC COVER_FRONT
         self.cover_file = ""
-        # COMM %{comment}
+        # COMM %{comment}       ICMT
         self.comment = ""
 
     def copy_metadata(self, new_data):
