@@ -17,11 +17,38 @@
 
 ## 使用 PySide2
 
-由于 Qt6 在许多 Linux 发行版的支持并不好，所以同时提供了转换成 PySide2 （Qt5） 的 patch ：
+由于许多 Linux 发行版并没有开始支持 Qt6 ，所以提供了转换成 PySide2 (Qt5) 代码的 patch ：
 
 ```shell
 $ git apply doc/patches/to_pyside2.patch
 ```
+
+## 安装
+
+Python 3.8.10 及以上都是测试过支持的。
+
+### Debian stable
+
+手动打上 PySide2 patch 并安装依赖包：
+
+```shell
+$ git apply doc/patches/to_pyside2.patch
+$ sudo apt-get install python3 \
+                       python3-pyside2.qtcore python3-pyside2.qtgui python3-pyside2.qtwidgets \
+                       python3-mutagen python3-requests
+```
+
+### Archlinux
+
+手动安装依赖包：
+
+```shell
+$ sudo pacman -S python pyside6 python-mutagen python-requests
+```
+
+### Windows
+
+从 [github release](https://github.com/weilinfox/haku-thtagger/releases) 下载预打包的 x86 架构应用程序包，支持 Windows7 及以上，解压缩后运行 ``thtagger.exe`` 。
 
 ## 截图
 
