@@ -28,98 +28,22 @@ class Ui_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(800, 600)
         MainWindow.setMinimumSize(QSize(800, 600))
-        self.actionCredit = QAction(MainWindow)
-        self.actionCredit.setObjectName(u"actionCredit")
+        self.actionAbout = QAction(MainWindow)
+        self.actionAbout.setObjectName(u"actionAbout")
         self.actionTHB_Wiki = QAction(MainWindow)
         self.actionTHB_Wiki.setObjectName(u"actionTHB_Wiki")
+        self.actionOpen = QAction(MainWindow)
+        self.actionOpen.setObjectName(u"actionOpen")
+        self.actionJsonTemplate = QAction(MainWindow)
+        self.actionJsonTemplate.setObjectName(u"actionJsonTemplate")
         self.actionSave = QAction(MainWindow)
         self.actionSave.setObjectName(u"actionSave")
-        self.actionJson_template = QAction(MainWindow)
-        self.actionJson_template.setObjectName(u"actionJson_template")
-        self.actionSave_2 = QAction(MainWindow)
-        self.actionSave_2.setObjectName(u"actionSave_2")
         self.actionQuit = QAction(MainWindow)
         self.actionQuit.setObjectName(u"actionQuit")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.fileGroup = QGroupBox(self.centralwidget)
-        self.fileGroup.setObjectName(u"fileGroup")
-        self.fileGroup.setEnabled(True)
-        self.fileGroup.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.verticalLayout_4 = QVBoxLayout(self.fileGroup)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.fileSelectText = QLineEdit(self.fileGroup)
-        self.fileSelectText.setObjectName(u"fileSelectText")
-        self.fileSelectText.setMinimumSize(QSize(0, 32))
-        self.fileSelectText.setMaximumSize(QSize(16777215, 32))
-
-        self.horizontalLayout_3.addWidget(self.fileSelectText)
-
-        self.fileSelectButton = QPushButton(self.fileGroup)
-        self.fileSelectButton.setObjectName(u"fileSelectButton")
-        self.fileSelectButton.setMinimumSize(QSize(84, 32))
-        self.fileSelectButton.setMaximumSize(QSize(16777215, 32))
-
-        self.horizontalLayout_3.addWidget(self.fileSelectButton)
-
-
-        self.verticalLayout_4.addLayout(self.horizontalLayout_3)
-
-        self.horizontalLayout_4 = QHBoxLayout()
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.fileListView = QListView(self.fileGroup)
-        self.fileListView.setObjectName(u"fileListView")
-        self.fileListView.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.fileListView.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.fileListView.setSelectionBehavior(QAbstractItemView.SelectRows)
-
-        self.horizontalLayout_4.addWidget(self.fileListView)
-
-        self.verticalLayout_3 = QVBoxLayout()
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.fileClearButton = QPushButton(self.fileGroup)
-        self.fileClearButton.setObjectName(u"fileClearButton")
-        self.fileClearButton.setMinimumSize(QSize(84, 32))
-
-        self.verticalLayout_3.addWidget(self.fileClearButton)
-
-        self.fileReloadButton = QPushButton(self.fileGroup)
-        self.fileReloadButton.setObjectName(u"fileReloadButton")
-        self.fileReloadButton.setMinimumSize(QSize(84, 32))
-
-        self.verticalLayout_3.addWidget(self.fileReloadButton)
-
-        self.fileUpButton = QPushButton(self.fileGroup)
-        self.fileUpButton.setObjectName(u"fileUpButton")
-        self.fileUpButton.setMinimumSize(QSize(84, 32))
-
-        self.verticalLayout_3.addWidget(self.fileUpButton)
-
-        self.fileDownButton = QPushButton(self.fileGroup)
-        self.fileDownButton.setObjectName(u"fileDownButton")
-        self.fileDownButton.setMinimumSize(QSize(84, 32))
-
-        self.verticalLayout_3.addWidget(self.fileDownButton)
-
-        self.fileDeleteButton = QPushButton(self.fileGroup)
-        self.fileDeleteButton.setObjectName(u"fileDeleteButton")
-        self.fileDeleteButton.setMinimumSize(QSize(84, 32))
-
-        self.verticalLayout_3.addWidget(self.fileDeleteButton)
-
-
-        self.horizontalLayout_4.addLayout(self.verticalLayout_3)
-
-
-        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
-
-
-        self.gridLayout.addWidget(self.fileGroup, 0, 0, 1, 1)
-
         self.editGroup = QGroupBox(self.centralwidget)
         self.editGroup.setObjectName(u"editGroup")
         self.editGroup.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
@@ -239,12 +163,88 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.tagGroup, 0, 1, 2, 1)
 
+        self.fileGroup = QGroupBox(self.centralwidget)
+        self.fileGroup.setObjectName(u"fileGroup")
+        self.fileGroup.setEnabled(True)
+        self.fileGroup.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.verticalLayout_4 = QVBoxLayout(self.fileGroup)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.fileSelectText = QLineEdit(self.fileGroup)
+        self.fileSelectText.setObjectName(u"fileSelectText")
+        self.fileSelectText.setMinimumSize(QSize(0, 32))
+        self.fileSelectText.setMaximumSize(QSize(16777215, 32))
+
+        self.horizontalLayout_3.addWidget(self.fileSelectText)
+
+        self.fileSelectButton = QPushButton(self.fileGroup)
+        self.fileSelectButton.setObjectName(u"fileSelectButton")
+        self.fileSelectButton.setMinimumSize(QSize(84, 32))
+        self.fileSelectButton.setMaximumSize(QSize(16777215, 32))
+
+        self.horizontalLayout_3.addWidget(self.fileSelectButton)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_3)
+
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.fileListView = QListView(self.fileGroup)
+        self.fileListView.setObjectName(u"fileListView")
+        self.fileListView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.fileListView.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.fileListView.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        self.horizontalLayout_4.addWidget(self.fileListView)
+
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.fileClearButton = QPushButton(self.fileGroup)
+        self.fileClearButton.setObjectName(u"fileClearButton")
+        self.fileClearButton.setMinimumSize(QSize(84, 32))
+
+        self.verticalLayout_3.addWidget(self.fileClearButton)
+
+        self.fileReloadButton = QPushButton(self.fileGroup)
+        self.fileReloadButton.setObjectName(u"fileReloadButton")
+        self.fileReloadButton.setMinimumSize(QSize(84, 32))
+
+        self.verticalLayout_3.addWidget(self.fileReloadButton)
+
+        self.fileUpButton = QPushButton(self.fileGroup)
+        self.fileUpButton.setObjectName(u"fileUpButton")
+        self.fileUpButton.setMinimumSize(QSize(84, 32))
+
+        self.verticalLayout_3.addWidget(self.fileUpButton)
+
+        self.fileDownButton = QPushButton(self.fileGroup)
+        self.fileDownButton.setObjectName(u"fileDownButton")
+        self.fileDownButton.setMinimumSize(QSize(84, 32))
+
+        self.verticalLayout_3.addWidget(self.fileDownButton)
+
+        self.fileDeleteButton = QPushButton(self.fileGroup)
+        self.fileDeleteButton.setObjectName(u"fileDeleteButton")
+        self.fileDeleteButton.setMinimumSize(QSize(84, 32))
+
+        self.verticalLayout_3.addWidget(self.fileDeleteButton)
+
+
+        self.horizontalLayout_4.addLayout(self.verticalLayout_3)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_4)
+
+
+        self.gridLayout.addWidget(self.fileGroup, 0, 0, 1, 1)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
         self.menubar.setGeometry(QRect(0, 0, 800, 30))
-        self.menuSource = QMenu(self.menubar)
-        self.menuSource.setObjectName(u"menuSource")
+        self.menuHelp = QMenu(self.menubar)
+        self.menuHelp.setObjectName(u"menuHelp")
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         MainWindow.setMenuBar(self.menubar)
@@ -253,13 +253,13 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuSource.menuAction())
-        self.menuSource.addAction(self.actionCredit)
+        self.menubar.addAction(self.menuHelp.menuAction())
+        self.menuHelp.addAction(self.actionAbout)
+        self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionJsonTemplate)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionJson_template)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionSave_2)
         self.menuFile.addAction(self.actionQuit)
 
         self.retranslateUi(MainWindow)
@@ -269,19 +269,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"thtagger - weilinfox", None))
-        self.actionCredit.setText(QCoreApplication.translate("MainWindow", u"About", None))
+        self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.actionTHB_Wiki.setText(QCoreApplication.translate("MainWindow", u"THB Wiki", None))
-        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Open folder(s)", None))
-        self.actionJson_template.setText(QCoreApplication.translate("MainWindow", u"Json template", None))
-        self.actionSave_2.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open folder(s)", None))
+        self.actionJsonTemplate.setText(QCoreApplication.translate("MainWindow", u"Json template", None))
+        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.actionQuit.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
-        self.fileGroup.setTitle(QCoreApplication.translate("MainWindow", u"Open folder(s)", None))
-        self.fileSelectButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
-        self.fileClearButton.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
-        self.fileReloadButton.setText(QCoreApplication.translate("MainWindow", u"Reload", None))
-        self.fileUpButton.setText(QCoreApplication.translate("MainWindow", u"Up", None))
-        self.fileDownButton.setText(QCoreApplication.translate("MainWindow", u"Down", None))
-        self.fileDeleteButton.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.editGroup.setTitle(QCoreApplication.translate("MainWindow", u"Track information", None))
         self.infoSearchButton.setText(QCoreApplication.translate("MainWindow", u"Search", None))
         self.fileRenameCheck.setText(QCoreApplication.translate("MainWindow", u"Rename", None))
@@ -290,7 +283,14 @@ class Ui_MainWindow(object):
         self.tagGroup.setTitle(QCoreApplication.translate("MainWindow", u"Tag information", None))
         self.tagImportButton.setText(QCoreApplication.translate("MainWindow", u"Import", None))
         self.tagSaveButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.menuSource.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
+        self.fileGroup.setTitle(QCoreApplication.translate("MainWindow", u"Open folder(s)", None))
+        self.fileSelectButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
+        self.fileClearButton.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
+        self.fileReloadButton.setText(QCoreApplication.translate("MainWindow", u"Reload", None))
+        self.fileUpButton.setText(QCoreApplication.translate("MainWindow", u"Up", None))
+        self.fileDownButton.setText(QCoreApplication.translate("MainWindow", u"Down", None))
+        self.fileDeleteButton.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
+        self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
     # retranslateUi
 

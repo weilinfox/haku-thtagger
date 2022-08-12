@@ -5,12 +5,13 @@ import traceback
 
 from PySide6.QtCore import QThread, QSize, Qt
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
 
 import ui
 from ui.ui_MainWindow import Ui_MainWindow
 from models import fileList, metadata, tagEditor
 from models.thtException import ThtException
+from .aboutDialog import AboutDialog
 
 _app_name = "thtagger %s" % ui.__version__
 
@@ -92,6 +93,13 @@ class MainWindow(QMainWindow):
 
         self.ui.tagImportButton.clicked.connect(self.on_tag_import_source)
         self.ui.tagSaveButton.clicked.connect(self.on_tag_save)
+
+        # menu bar
+        self.ui.actionOpen.triggered.connect(self.on_file_select)
+        self.ui.actionJsonTemplate.triggered.connect(self.on_source_json_template_generate)
+        self.ui.actionSave.triggered.connect(self.on_tag_save)
+        self.ui.actionQuit.triggered.connect(lambda: QApplication.quit())
+        self.ui.actionAbout.triggered.connect(self.on_about_show)
 
     def on_file_select(self):
         """
@@ -371,6 +379,12 @@ class MainWindow(QMainWindow):
             if len(filelist) > 0:
                 self.ui.infoSearchKeyText.setText(filelist[0])
 
+    def on_source_json_template_generate(self):
+        """
+        生成 json 模板
+        :return:
+        """
+
     def on_tag_import_source(self):
         """
         按规则重命名 并 导入 source 元数据
@@ -429,3 +443,11 @@ class MainWindow(QMainWindow):
             self.ui.fileRenameText.setEnabled(True)
         else:
             self.ui.fileRenameText.setEnabled(False)
+
+    def on_about_show(self):
+        """
+        显示关于页面
+        :return:
+        """
+        dialog = AboutDialog()
+        dialog.exec()
