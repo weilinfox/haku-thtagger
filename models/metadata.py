@@ -116,7 +116,8 @@ class MetadataReq(QObject):
         self.__source_table_model = None
 
     def __to_main_thread(self):
-        self.moveToThread(QApplication.instance().thread())
+        if self.thread() != QApplication.instance().thread():
+            self.moveToThread(QApplication.instance().thread())
 
     def search_album(self):
         """
@@ -132,7 +133,7 @@ class MetadataReq(QObject):
             elif self.__index == 1:
                 self.__source_metadata_list = localDb.json_load(self.__key)
                 self.__status = 2
-                self.__source_table_model = MetadataTableModel([("undefined1", "undefined2")])
+                self.__source_table_model = MetadataTableModel(self.__source_metadata_list[0])
                 self.metadata_search_finished.emit()
         except requests.Timeout:
             self.exception_raise.emit(ThtException("Search request timeout"))

@@ -1,6 +1,6 @@
 # Thtagger
 
-一个简单的基于 Python 、 PySide6 和 [Mutagen](https://github.com/quodlibet/mutagen) 的音乐元数据编辑器。
+一个简单的基于 Python3 、 PySide6 和 [Mutagen](https://github.com/quodlibet/mutagen) 的音乐元数据编辑器。
 
 ## 格式支持
 

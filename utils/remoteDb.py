@@ -3,6 +3,7 @@ import os
 import requests
 
 from .cache import get_cache_path
+from .localDb import _show_title
 
 cache_dir = get_cache_path()
 
@@ -81,8 +82,7 @@ def thb_get_metadata(key: str) -> tuple:
                 ans_list.append((k["name"], k["artist"], alname, circle, date, k["discno"], k["trackno"],
                                  genre, k["ogmusic"], file_path))
             ans_list.sort(key=lambda x: (int(x[4]), int(x[5])))
-            ans_list.insert(0, ("Title", "Artist", "Album", "Album artist", "Year", "Disk no", "Track no",
-                                "Genre", "Comment", "Cover"))
+            ans_list.insert(0, _show_title)
             for i in range(len(ans_list)):
                 ans_covers.append(ans_list[i][-1:])
                 ans_list[i] = ans_list[i][:-1]

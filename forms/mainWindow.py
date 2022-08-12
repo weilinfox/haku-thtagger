@@ -8,6 +8,7 @@ from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QApplication, QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
 
 import ui
+import utils.localDb
 from ui.ui_MainWindow import Ui_MainWindow
 from models import fileList, metadata, tagEditor
 from models.thtException import ThtException
@@ -29,6 +30,7 @@ class MainWindow(QMainWindow):
         # source 列表 index 参考 models.metadata
         self.__source_item = ['THB Wiki', 'Json file']
         self.__source_btn_enabled = [False] * 1 + [True]
+        self.__source_new_thread = [True] * 1 + [False]
         self.__source_btn_text = ["Search"] * 1 + ["Load"]
 
         # MetadataReq
@@ -221,20 +223,28 @@ class MainWindow(QMainWindow):
         self.ui.albumCoverLable.clear()
         index = self.ui.infoSourceCombo.currentIndex()
         key = self.ui.infoSearchKeyText.text()
-        # 在新线程中处理请求
+
         with self.__source_search_lock:
             if self.__source_search_thread is not None:
                 if self.__source_search_thread.isRunning:
                     self.__source_search_thread.exit()
+            self.__source_search_thread = None
+
             self.__source_metadata_req = metadata.MetadataReq(index, key)
-            self.__source_search_thread = QThread(self)
-            self.__source_search_thread.started.connect(self.__source_metadata_req.search_album)
             self.__source_metadata_req.album_search_finished.connect(self.on_source_album_finished)
             self.__source_metadata_req.metadata_search_finished.connect(self.on_source_metadata_finished)
             self.__source_metadata_req.exception_raise.connect(self.on_source_exception)
+
+        if self.__source_new_thread[index]:
+            # 在新线程中处理请求
+            self.__source_search_thread = QThread(self)
+            self.__source_search_thread.started.connect(self.__source_metadata_req.search_album)
             self.__source_metadata_req.moveToThread(self.__source_search_thread)
-        # 专辑搜索
-        self.__source_search_thread.start()
+
+            self.__source_search_thread.start()
+        else:
+            # 阻塞的专辑搜索
+            self.__source_metadata_req.search_album()
 
     def stop_source_request_thread(self):
         """
@@ -360,30 +370,36 @@ class MainWindow(QMainWindow):
         self.ui.infoTableView.setEnabled(True)
         self.stop_source_request_thread()
 
-    def on_source_json_load(self, key: str):
-        """
-        选取本地 json 专辑信息
-        :param key: 旧路径
-        :return:
-        """
-        if os.path.isfile(key):
-            key = os.path.dirname(key)
-        elif not os.path.isdir(key):
-            key = os.path.expandvars("$HOME")
-        dialog = QFileDialog(self)
-        dialog.setWindowTitle("Select json file")
-        dialog.setDirectory(key)
-        dialog.setFileMode(QFileDialog.ExistingFile)
-        if dialog.exec():
-            filelist = dialog.selectedFiles()
-            if len(filelist) > 0:
-                self.ui.infoSearchKeyText.setText(filelist[0])
-
     def on_source_json_template_generate(self):
         """
         生成 json 模板
         :return:
         """
+        data = []
+        i = 0
+        while 1:
+            d = self.__tag_editor.get_data(i)
+            if d is None:
+                break
+            d = d.get_metadata()
+            data.append((d.title,
+                         d.artist,
+                         d.album,
+                         d.album_artist,
+                         d.year,
+                         d.disk_number,
+                         d.track_number,
+                         d.genre,
+                         d.comment,
+                         d.cover_file))
+            i += 1
+
+        try:
+            utils.localDb.json_save(data)
+        except Exception:
+            QMessageBox.critical(self, "Thtagger save file error", traceback.format_exc(),
+                                 QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+
 
     def on_tag_import_source(self):
         """
@@ -431,7 +447,7 @@ class MainWindow(QMainWindow):
         try:
             self.__tag_editor.save_files()
         except ThtException as e:
-            QMessageBox.warning(self, "Thtagger Exception", str(e),
+            QMessageBox.warning(self, "Thtagger save file error", str(e),
                                 QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
 
     def on_rename_check(self):
@@ -444,7 +460,8 @@ class MainWindow(QMainWindow):
         else:
             self.ui.fileRenameText.setEnabled(False)
 
-    def on_about_show(self):
+    @staticmethod
+    def on_about_show():
         """
         显示关于页面
         :return:

@@ -552,6 +552,8 @@ class TagEditor(QAbstractTableModel):
         """
         根据行获取 TagItem
         :param index: 索引
-        :return:
+        :return: TagItem
         """
-        return self.__data[index]
+        if index < len(self.__data):
+            return self.__data[index]
+        return None
