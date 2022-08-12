@@ -137,13 +137,26 @@ class TagItem:
         return vorbis_dict.get(field.lower(), "")
 
     def get_metadata(self):
+        """
+        元数据
+        :return: class Metadata
+        """
         return self.__metadata
 
     def edit_metadata(self, new_data: Metadata):
+        """
+        编辑元数据
+        :param new_data:
+        :return:
+        """
         self.__metadata.copy_metadata(new_data)
         self.__new_metadata = True
 
     def save_metadata(self):
+        """
+        保存元数据
+        :return:
+        """
         if not self.__new_metadata:
             return
         cover_mime = mimetypes.guess_type(self.__metadata.cover_file)[0]
@@ -201,6 +214,11 @@ class TagItem:
 
     @loadfile(writable=True)
     def save_riff_info(self, file):
+        """
+        保存 wav riff info
+        :param file: 文件名
+        :return:
+        """
         riff_file = mutagen._riff.RiffFile(file.fileobj)
         info_chunk = None
         for c in riff_file.root.subchunks():
@@ -219,24 +237,30 @@ class TagItem:
         self.__save_riff_info_chunk_data(info_chunk, "IGNR", self.__metadata.genre)
 
     def __save_riff_info_chunk_data(self, chunk, name: str, value: str):
+        """
+        保存一个 riff info 字段
+        :param chunk:
+        :param name: 字段名
+        :param value: 字段值
+        :return:
+        """
         data = value.encode(self.__riff_info_encoding, errors='replace') + b'\x00'
         chunk.insert_chunk(name, data)
 
+    def set_riff_info_encoding(self, encoding: str):
+        """
+        设置 riff info 字符编码
+        :param encoding: 字符编码
+        :return:
+        """
+        self.__riff_info_encoding = encoding
+
     def is_metadata_edited(self):
+        """
+        元数据是否被更改
+        :return:
+        """
         return self.__new_metadata
-
-    def is_renamed(self):
-        return self.__new_path != ""
-
-    def submit_rename(self):
-        os.rename(self.__path, self.__new_path)
-        self.__path = self.__new_path
-
-    def get_path(self):
-        return self.__path
-
-    def get_new_path(self):
-        return self.__new_path
 
     def set_new_path(self, name: str):
         """
@@ -248,8 +272,34 @@ class TagItem:
         if self.__new_path == self.__path:
             self.__new_path = ""
 
-    def set_riff_info_encoding(self, encoding: str):
-        self.__riff_info_encoding = encoding
+    def get_new_path(self):
+        """
+        获取新路径
+        :return: 新路径
+        """
+        return self.__new_path
+
+    def is_renamed(self):
+        """
+        是否设置了新路径
+        :return:
+        """
+        return self.__new_path != ""
+
+    def submit_rename(self):
+        """
+        重命名文件
+        :return:
+        """
+        os.rename(self.__path, self.__new_path)
+        self.__path = self.__new_path
+
+    def get_path(self):
+        """
+        获取文件路径
+        :return: 文件路径
+        """
+        return self.__path
 
 
 class TagEditor(QAbstractTableModel):
@@ -482,6 +532,11 @@ class TagEditor(QAbstractTableModel):
                 self.dataChanged.emit(top_left, bottom_right)
 
     def new_tag_item(self, path: str) -> TagItem:
+        """
+        构造新 TagItem
+        :param path: 文件路径
+        :return: TagItem
+        """
         item = TagItem(path)
         item.set_riff_info_encoding(self.__riff_info_encoding)
         return item
@@ -494,4 +549,9 @@ class TagEditor(QAbstractTableModel):
         return len(self.__data)
 
     def get_data(self, index: int):
+        """
+        根据行获取 TagItem
+        :param index: 索引
+        :return:
+        """
         return self.__data[index]

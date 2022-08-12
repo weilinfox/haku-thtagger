@@ -155,6 +155,10 @@ class MainWindow(QMainWindow):
             self.__tag_editor.remove_file(selected[0].row())
 
     def on_file_clear(self):
+        """
+        文件列表清空
+        :return:
+        """
         self.__fileList.clear()
         self.__tag_editor.clear_file()
         self.ui.tagTableView.resizeColumnsToContents()
@@ -225,6 +229,10 @@ class MainWindow(QMainWindow):
         self.__source_search_thread.start()
 
     def stop_source_request_thread(self):
+        """
+        销毁搜索线程
+        :return:
+        """
         with self.__source_search_lock:
             if self.__source_search_thread is not None:
                 self.__source_search_thread.exit()
@@ -298,6 +306,11 @@ class MainWindow(QMainWindow):
         self.stop_source_request_thread()
 
     def __cover_image_show(self, file):
+        """
+        显示专辑封面图片
+        :param file: 文件路径/文件内容
+        :return:
+        """
         if not file:
             return
         if isinstance(file, str):
