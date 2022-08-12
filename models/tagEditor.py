@@ -1,3 +1,4 @@
+import mimetypes
 import os
 import traceback
 
@@ -122,6 +123,11 @@ class TagItem:
         if not self.__new_metadata:
             return
         if self.__format == self.mp3 or self.__format == self.wav:
+            cover_mime = mimetypes.guess_type(self.__metadata.cover_file)[0]
+            with open(self.__metadata.cover_file, "rb") as f:
+                cover_data = f.read()
+            if self.__mutagen_file.tags is None:
+                self.__mutagen_file.tags = mutagen.id3.ID3()
             self.__mutagen_file.tags.setall("TIT2", [mutagen.id3.TIT2(encodings=3, text=self.__metadata.title)])
             self.__mutagen_file.tags.setall("TPE1", [mutagen.id3.TPE1(encodings=3, text=self.__metadata.artist)])
             self.__mutagen_file.tags.setall("TPE2", [mutagen.id3.TPE2(encodings=3, text=self.__metadata.album_artist)])
@@ -131,6 +137,8 @@ class TagItem:
             self.__mutagen_file.tags.setall("TRCK", [mutagen.id3.TRCK(encodings=3, text=self.__metadata.track_number)])
             self.__mutagen_file.tags.setall("TCON", [mutagen.id3.TCON(encodings=3, text=self.__metadata.genre)])
             self.__mutagen_file.tags.setall("COMM", [mutagen.id3.COMM(encodings=3, text=self.__metadata.comment)])
+            self.__mutagen_file.tags.setall("APIC", [mutagen.id3.APIC(encodings=3, type=3,
+                                                                      mime=cover_mime, data=cover_data)])
 
             self.__mutagen_file.tags.save(self.__mutagen_file.filename)
 
