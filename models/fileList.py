@@ -13,7 +13,7 @@ class FileList:
         self.__fullPathList = []
         self.__listModel = QStringListModel()
 
-    def add(self, path: str) -> list[str]:
+    def add(self, path: str):
         """
         添加目录
         :param path: 目录路径
@@ -63,7 +63,7 @@ class FileList:
         """
         self.__listModel.setStringList(self.__fileList)
 
-    def reload(self) -> list[str]:
+    def reload(self):
         """
         重载所有路径
         :return:

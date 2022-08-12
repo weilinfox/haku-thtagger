@@ -202,7 +202,7 @@ class MetadataReq(QObject):
         """
         return self.__source_table_model
 
-    def generate_metadata_list(self) -> list[Metadata]:
+    def generate_metadata_list(self):
         """
         整专元数据 构造 Metadata 列表
         :return: Metadata 列表
