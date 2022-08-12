@@ -26,4 +26,6 @@ class AboutDialog(QDialog):
 <p><a href="https://www.python.org/">Python</a>&nbsp;version:&nbsp;%s</p>
 <p><a href="https://www.qt.io/">Qt</a>&nbsp;version:&nbsp;%s</p>
 <p><a href="https://github.com/quodlibet/mutagen">Mutagen</a>&nbsp;version:&nbsp;%s</p>
+
+</br><p>License: GNU General Public License Version 2</p>
         """ % (ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))
