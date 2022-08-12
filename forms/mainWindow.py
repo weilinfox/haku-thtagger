@@ -4,10 +4,10 @@ import threading
 import traceback
 
 from PySide6.QtCore import QThread, QSize, Qt
-from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
 
-import ui
+import ui.rc_Thtagger
 import utils.localDb
 from ui.ui_MainWindow import Ui_MainWindow
 from models import fileList, metadata, tagEditor
@@ -23,6 +23,9 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.setWindowTitle(_app_name)
+        self.setWindowIcon(QIcon(":/img/thtagger.jpg"))
 
         # 文件列表显示
         self.__fileList = fileList.FileList()
@@ -45,7 +48,6 @@ class MainWindow(QMainWindow):
         self.bind()
 
     def bind(self):
-        self.setWindowTitle(_app_name)
 
         # file area
         self.ui.fileListView.setModel(self.__fileList.get_list())
