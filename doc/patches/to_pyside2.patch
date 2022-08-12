@@ -1,0 +1,236 @@
+diff --git a/forms/aboutDialog.py b/forms/aboutDialog.py
+index 97f5cc6..4b534aa 100644
+--- a/forms/aboutDialog.py
++++ b/forms/aboutDialog.py
+@@ -2,8 +2,8 @@
+ import sys
+ 
+ import mutagen
+-import PySide6
+-from PySide6.QtWidgets import QDialog
++import PySide2
++from PySide2.QtWidgets import QDialog
+ 
+ import ui
+ from ui.ui_AboutDialog import Ui_AboutDialog
+@@ -28,4 +28,4 @@ class AboutDialog(QDialog):
+ <p><a href="https://github.com/quodlibet/mutagen">Mutagen</a>&nbsp;version:&nbsp;%s</p>
+ 
+ </br><p>License: GNU General Public License Version 2</p>
+-        """ % (ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))
++        """ % (ui.__version__, sys.version, PySide2.__version__,  mutagen.version_string))
+diff --git a/forms/mainWindow.py b/forms/mainWindow.py
+index ee3e5c4..d770ecb 100644
+--- a/forms/mainWindow.py
++++ b/forms/mainWindow.py
+@@ -3,9 +3,9 @@ import os
+ import threading
+ import traceback
+ 
+-from PySide6.QtCore import QThread, QSize, Qt
+-from PySide6.QtGui import QImage, QPixmap, QIcon
+-from PySide6.QtWidgets import QApplication, QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
++from PySide2.QtCore import QThread, QSize, Qt
++from PySide2.QtGui import QImage, QPixmap, QIcon
++from PySide2.QtWidgets import QApplication, QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
+ 
+ import ui.rc_Thtagger
+ import utils.localDb
+@@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
+         dialog.setWindowTitle("Select file or folder")
+         dialog.setDirectory(default_path)
+         dialog.setFileMode(QFileDialog.Directory)
+-        if dialog.exec():
++        if dialog.exec_():
+             filelist = dialog.selectedFiles()
+             if len(filelist) > 0:
+                 self.ui.fileSelectText.setText(filelist[0])
+@@ -469,4 +469,4 @@ class MainWindow(QMainWindow):
+         :return:
+         """
+         dialog = AboutDialog()
+-        dialog.exec()
++        dialog.exec_()
+diff --git a/models/fileList.py b/models/fileList.py
+index b2ba9a1..5686133 100644
+--- a/models/fileList.py
++++ b/models/fileList.py
+@@ -1,6 +1,6 @@
+ import os
+ 
+-from PySide6.QtCore import QStringListModel
++from PySide2.QtCore import QStringListModel
+ 
+ from .tagEditor import is_supported
+ from .thtException import ThtException
+diff --git a/models/metadata.py b/models/metadata.py
+index ea4d5a0..4509cda 100644
+--- a/models/metadata.py
++++ b/models/metadata.py
+@@ -1,7 +1,7 @@
+ import requests
+ import traceback
+-from PySide6.QtCore import QObject, Signal, QAbstractTableModel, QModelIndex, Qt
+-from PySide6.QtWidgets import QApplication
++from PySide2.QtCore import QObject, Signal, QAbstractTableModel, QModelIndex, Qt
++from PySide2.QtWidgets import QApplication
+ 
+ from .thtException import ThtException
+ from utils import localDb, remoteDb
+diff --git a/models/tagEditor.py b/models/tagEditor.py
+index ad54a83..d6a94c7 100644
+--- a/models/tagEditor.py
++++ b/models/tagEditor.py
+@@ -9,8 +9,8 @@ import mutagen.id3
+ import mutagen._riff
+ from mutagen._util import loadfile
+ 
+-from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
+-from PySide6.QtGui import QFont, QPixmap, QImage
++from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
++from PySide2.QtGui import QFont, QPixmap, QImage
+ 
+ from .metadata import Metadata
+ from .thtException import ThtException
+diff --git a/requirements.txt b/requirements.txt
+index b078855..f8a61cd 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,3 +1,3 @@
+ mutagen==1.45.1
+-PySide6==6.3.1
++PySide2==5.15.2.1
+ requests==2.28.1
+diff --git a/thtagger.py b/thtagger.py
+index 6176d24..1a35899 100755
+--- a/thtagger.py
++++ b/thtagger.py
+@@ -4,7 +4,7 @@ import os
+ import sys
+ import traceback
+ 
+-from PySide6.QtWidgets import QApplication, QMessageBox
++from PySide2.QtWidgets import QApplication, QMessageBox
+ 
+ from forms.mainWindow import MainWindow
+ import utils.cache
+@@ -22,7 +22,7 @@ if __name__ == "__main__":
+         window = MainWindow()
+         window.show()
+ 
+-        sys.exit(app.exec())
++        sys.exit(app.exec_())
+     except Exception as e:
+         if window is not None:
+             QMessageBox.critical(window, "Unhandled Exception", traceback.format_exc(),
+diff --git a/ui/rc_Thtagger.py b/ui/rc_Thtagger.py
+index e8a739f..731816c 100644
+--- a/ui/rc_Thtagger.py
++++ b/ui/rc_Thtagger.py
+@@ -1,9 +1,9 @@
+ # Resource object code (Python 3)
+ # Created by: object code
+-# Created by: The Resource Compiler for Qt version 6.3.1
++# Created by: The Resource Compiler for Qt version 5.15.2
+ # WARNING! All changes made in this file will be lost!
+ 
+-from PySide6 import QtCore
++from PySide2 import QtCore
+ 
+ qt_resource_data = b"\
+ \x00\x00\x072\
+diff --git a/ui/ui_AboutDialog.py b/ui/ui_AboutDialog.py
+index 758de7e..7c07bfb 100644
+--- a/ui/ui_AboutDialog.py
++++ b/ui/ui_AboutDialog.py
+@@ -3,20 +3,15 @@
+ ################################################################################
+ ## Form generated from reading UI file 'AboutDialog.ui'
+ ##
+-## Created by: Qt User Interface Compiler version 6.3.1
++## Created by: Qt User Interface Compiler version 5.15.2
+ ##
+ ## WARNING! All changes made in this file will be lost when recompiling UI file!
+ ################################################################################
+ 
+-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+-    QMetaObject, QObject, QPoint, QRect,
+-    QSize, QTime, QUrl, Qt)
+-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+-    QFont, QFontDatabase, QGradient, QIcon,
+-    QImage, QKeySequence, QLinearGradient, QPainter,
+-    QPalette, QPixmap, QRadialGradient, QTransform)
+-from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
+-    QLabel, QSizePolicy, QVBoxLayout, QWidget)
++from PySide2.QtCore import *
++from PySide2.QtGui import *
++from PySide2.QtWidgets import *
++
+ 
+ class Ui_AboutDialog(object):
+     def setupUi(self, AboutDialog):
+diff --git a/ui/ui_MainWindow.py b/ui/ui_MainWindow.py
+index b580d0f..ab970f0 100644
+--- a/ui/ui_MainWindow.py
++++ b/ui/ui_MainWindow.py
+@@ -3,24 +3,15 @@
+ ################################################################################
+ ## Form generated from reading UI file 'MainWindow.ui'
+ ##
+-## Created by: Qt User Interface Compiler version 6.3.1
++## Created by: Qt User Interface Compiler version 5.15.2
+ ##
+ ## WARNING! All changes made in this file will be lost when recompiling UI file!
+ ################################################################################
+ 
+-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+-    QMetaObject, QObject, QPoint, QRect,
+-    QSize, QTime, QUrl, Qt)
+-from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+-    QCursor, QFont, QFontDatabase, QGradient,
+-    QIcon, QImage, QKeySequence, QLinearGradient,
+-    QPainter, QPalette, QPixmap, QRadialGradient,
+-    QTransform)
+-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
+-    QGridLayout, QGroupBox, QHBoxLayout, QHeaderView,
+-    QLabel, QLineEdit, QListView, QMainWindow,
+-    QMenu, QMenuBar, QPushButton, QSizePolicy,
+-    QStatusBar, QTableView, QVBoxLayout, QWidget)
++from PySide2.QtCore import *
++from PySide2.QtGui import *
++from PySide2.QtWidgets import *
++
+ 
+ class Ui_MainWindow(object):
+     def setupUi(self, MainWindow):
+diff --git a/utils/localDb.py b/utils/localDb.py
+index 6744395..2756ced 100644
+--- a/utils/localDb.py
++++ b/utils/localDb.py
+@@ -1,7 +1,7 @@
+ import json
+ import os
+ 
+-from PySide6.QtWidgets import QApplication, QFileDialog
++from PySide2.QtWidgets import QApplication, QFileDialog
+ 
+ _json_title = ("title", "artist", "album", "circle", "date", "disk_no", "track_no", "Genre", "Comment", "Cover_url")
+ _show_title = ("Title", "Artist", "Album", "Album artist", "Year", "Disk no", "Track no", "Genre", "Comment", "Cover")
+@@ -28,7 +28,7 @@ def json_load(key: str) -> tuple:
+         dialog.setDirectory(path)
+         dialog.setFileMode(QFileDialog.ExistingFile)
+         dialog.setNameFilter("Json files (*.json)")
+-        if dialog.exec():
++        if dialog.exec_():
+             filelist = dialog.selectedFiles()
+             if len(filelist) == 1:
+                 key = filelist[0]
+@@ -81,7 +81,7 @@ def json_save(data: list):
+     dialog.setFileMode(QFileDialog.AnyFile)
+     dialog.setDefaultSuffix("json")
+     dialog.setNameFilter("Json files (*.json)")
+-    if dialog.exec():
++    if dialog.exec_():
+         filelist = dialog.selectedFiles()
+         if len(filelist) == 1:
+             path = filelist[0]

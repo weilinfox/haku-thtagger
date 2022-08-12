@@ -33,10 +33,10 @@ class Ui_AboutDialog(object):
         AboutDialog.setLocale(QLocale(QLocale.English, QLocale.HongKong))
         self.verticalLayout = QVBoxLayout(AboutDialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.aboutText = QLabel(AboutDialog)
-        self.aboutText.setObjectName(u"aboutText")
+        self.aboutLabel = QLabel(AboutDialog)
+        self.aboutLabel.setObjectName(u"aboutLabel")
 
-        self.verticalLayout.addWidget(self.aboutText)
+        self.verticalLayout.addWidget(self.aboutLabel)
 
         self.okButtonBox = QDialogButtonBox(AboutDialog)
         self.okButtonBox.setObjectName(u"okButtonBox")
@@ -55,6 +55,6 @@ class Ui_AboutDialog(object):
 
     def retranslateUi(self, AboutDialog):
         AboutDialog.setWindowTitle(QCoreApplication.translate("AboutDialog", u"About", None))
-        self.aboutText.setText("")
+        self.aboutLabel.setText("")
     # retranslateUi
 

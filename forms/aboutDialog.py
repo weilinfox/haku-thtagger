@@ -20,7 +20,7 @@ class AboutDialog(QDialog):
 
         self.setWindowTitle("About %s" % _app_name)
 
-        self.ui.aboutText.setText("""
+        self.ui.aboutLabel.setText("""
 <h2>白玉楼製作所</h2>
 <p><a href="https://github.com/weilinfox/haku-thtagger">thtagger</a>&nbsp;version:&nbsp;%s</p>
 <p><a href="https://www.python.org/">Python</a>&nbsp;version:&nbsp;%s</p>
