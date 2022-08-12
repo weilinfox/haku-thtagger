@@ -35,6 +35,7 @@ class TagItem:
     valid_formats = [mp3, flac, wav]
 
     def __init__(self, path: str):
+        path = os.path.normpath(path)
         split = os.path.splitext(path)
         name1 = split[0]
         suffix = split[1].lower()
@@ -74,6 +75,8 @@ class TagItem:
             self.__mutagen_file = mutagen.flac.FLAC(path)
             self.__metadata.length = self.__mutagen_file.info.length
             self.__metadata.bitrate = self.__mutagen_file.info.bitrate
+            self.__metadata.sample_rate = self.__mutagen_file.info.sample_rate
+            self.__metadata.bits_per_sample = self.__mutagen_file.info.bits_per_sample
             self.__metadata.channels = self.__mutagen_file.info.channels
         elif suffix == self.wav:
             self.__mutagen_file = mutagen.wave.WAVE(path)
@@ -83,34 +86,47 @@ class TagItem:
             self.__metadata.sample_rate = self.__mutagen_file.info.sample_rate
             self.__metadata.bits_per_sample = self.__mutagen_file.info.bits_per_sample
 
-        if self.__mutagen_file.tags is not None and (suffix == self.wav or suffix == self.mp3):
-            obj = self.__mutagen_file.tags.get("TIT2")
-            if obj is not None:
-                self.__metadata.title = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("TPE1")
-            if obj is not None:
-                self.__metadata.artist = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("TPE2")
-            if obj is not None:
-                self.__metadata.album_artist = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("TALB")
-            if obj is not None:
-                self.__metadata.album = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("TDRC")
-            if obj is not None:
-                self.__metadata.year = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("TPOS")
-            if obj is not None:
-                self.__metadata.disk_number = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("TRCK")
-            if obj is not None:
-                self.__metadata.track_number = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("TCON")
-            if obj is not None:
-                self.__metadata.genre = str(obj.text[0])
-            obj = self.__mutagen_file.tags.get("COMM")
-            if obj is not None:
-                self.__metadata.comment = str(obj.text[0])
+        if suffix == self.wav or suffix == self.mp3:
+            # ID3
+            self.__metadata.title = self.__get_tag_id3_field("TIT2")
+            self.__metadata.artist = self.__get_tag_id3_field("TPE1")
+            self.__metadata.album_artist = self.__get_tag_id3_field("TPE2")
+            self.__metadata.album = self.__get_tag_id3_field("TALB")
+            self.__metadata.year = self.__get_tag_id3_field("TDRC")
+            self.__metadata.disk_number = self.__get_tag_id3_field("TPOS")
+            self.__metadata.track_number = self.__get_tag_id3_field("TRCK")
+            self.__metadata.genre = self.__get_tag_id3_field("TCON")
+            self.__metadata.comment = self.__get_tag_id3_field("COMM")
+        elif suffix == self.flac:
+            # Vorbis comment
+            print(self.__mutagen_file.tags)
+            vorbis_dict = {}
+            if isinstance(self.__mutagen_file.tags, list):
+                for f in self.__mutagen_file.tags:
+                    vorbis_dict.update({f[0].lower(): f[1]})
+            elif isinstance(self.__mutagen_file.tags, dict):
+                for k, v in self.__mutagen_file.tags.items():
+                    vorbis_dict.update({k.lower(): v})
+            self.__metadata.title = self.__get_tag_vorbis_field(vorbis_dict, "TITLE")
+            self.__metadata.artist = self.__get_tag_vorbis_field(vorbis_dict, "ARTIST")
+            self.__metadata.album_artist = self.__get_tag_vorbis_field(vorbis_dict, "ALBUMARTIST")
+            self.__metadata.album = self.__get_tag_vorbis_field(vorbis_dict, "ALBUM")
+            self.__metadata.year = self.__get_tag_vorbis_field(vorbis_dict, "DATE")
+            self.__metadata.disk_number = self.__get_tag_vorbis_field(vorbis_dict, "DISCNUMBER")
+            self.__metadata.track_number = self.__get_tag_vorbis_field(vorbis_dict, "TRACKNUMBER")
+            self.__metadata.genre = self.__get_tag_vorbis_field(vorbis_dict, "GENRE")
+            self.__metadata.comment = self.__get_tag_vorbis_field(vorbis_dict, "COMMENT")
+
+    def __get_tag_id3_field(self, field: str) -> str:
+        if self.__mutagen_file.tags is None:
+            return ""
+        obj = self.__mutagen_file.tags.get(field)
+        if obj is not None:
+            return str(obj.text[0])
+
+    @staticmethod
+    def __get_tag_vorbis_field(vorbis_dict: dict, field: str) -> str:
+        return vorbis_dict.get(field.lower(), "")
 
     def get_metadata(self):
         return self.__metadata
@@ -147,7 +163,19 @@ class TagItem:
             if self.__format == self.wav:
                 self.save_riff_info(self.__path)
         elif self.__format == self.flac:
-            pass
+            self.__mutagen_file.delete()
+            if self.__mutagen_file.tags is None:
+                self.__mutagen_file.add_tags()
+            self.__mutagen_file.tags.update({"TITLE": self.__metadata.title})
+            self.__mutagen_file.tags.update({"ARTIST": self.__metadata.artist})
+            self.__mutagen_file.tags.update({"ALBUM": self.__metadata.album})
+            self.__mutagen_file.tags.update({"ALBUMARTIST": self.__metadata.album_artist})
+            self.__mutagen_file.tags.update({"DATE": self.__metadata.year})
+            self.__mutagen_file.tags.update({"DISCNUMBER": self.__metadata.disk_number})
+            self.__mutagen_file.tags.update({"TRACKNUMBER": self.__metadata.track_number})
+            self.__mutagen_file.tags.update({"GENRE": self.__metadata.genre})
+            self.__mutagen_file.tags.update({"COMMENT": self.__metadata.comment})
+            self.__mutagen_file.save()
 
         self.__new_metadata = False
 
@@ -180,6 +208,10 @@ class TagItem:
     def is_renamed(self):
         return self.__new_path != ""
 
+    def submit_rename(self):
+        os.rename(self.__path, self.__new_path)
+        self.__path = self.__new_path
+
     def get_path(self):
         return self.__path
 
@@ -192,7 +224,9 @@ class TagItem:
         :param name: 文件名 不包含后缀
         :return:
         """
-        self.__new_path = os.path.join(self.__parent_path, "%s.%s" % (name, self.__format))
+        self.__new_path = os.path.normpath(os.path.join(self.__parent_path, "%s.%s" % (name, self.__format)))
+        if self.__new_path == self.__path:
+            self.__new_path = ""
 
     def set_riff_info_encoding(self, encoding: str):
         self.__riff_info_encoding = encoding
@@ -263,6 +297,8 @@ class TagEditor(QAbstractTableModel):
             elif index.column() == 13:
                 return "%.3f kHz" % (float(self.__data[index.row()].get_metadata().sample_rate) / 1000.0)
             elif index.column() == 14:
+                if self.__data[index.row()].get_metadata().bits_per_sample < 0:
+                    return ""
                 return "%d bits" % self.__data[index.row()].get_metadata().bits_per_sample
             elif index.column() == 15:
                 return self.__data[index.row()].get_metadata().bitrate_mode
@@ -411,7 +447,7 @@ class TagEditor(QAbstractTableModel):
 
                 # 重命名
                 if self.__data[i].is_renamed():
-                    os.rename(self.__data[i].get_path(), self.__data[i].get_new_path())
+                    self.__data[i].submit_rename()
             except Exception:
                 raise ThtException("Error occur while saving changes:\n" + traceback.format_exc())
             finally:

@@ -13,30 +13,31 @@ class Metadata:
         self.bitrate = 0
         self.channels = 0
         self.sample_rate = 0
-        # wave only
-        self.bits_per_sample = 0
+        # wave and flac
+        self.bits_per_sample = -1
         # mp3 only
         self.bitrate_mode = ""
 
-        # TIT2 %{title}         INAM
+        # ID3   rename format   RIFF    VORBIS
+        # TIT2  %{title}        INAM    TITLE
         self.title = ""
-        # TPE1 %{artist}        IART
+        # TPE1  %{artist}       IART    ARTIST
         self.artist = ""
-        # TPE2 %{album_artist}
+        # TPE2  %{album_artist}         ALBUMARTIST
         self.album_artist = ""
-        # TALB %{album}         IPRD
+        # TALB  %{album}        IPRD    ALBUM
         self.album = ""
-        # TDRC %{year}          ICRD
+        # TDRC  %{year}         ICRD    DATE
         self.year = ""
-        # TPOS %{disk}
+        # TPOS  %{disk}                 DISCNUMBER
         self.disk_number = ""
-        # TRCK %{track}         ITRK
+        # TRCK  %{track}        ITRK    TRACKNUMBER
         self.track_number = ""
-        # TCON %{genre}         IGNR
+        # TCON  %{genre}        IGNR    GENRE
         self.genre = ""
         # APIC COVER_FRONT
         self.cover_file = ""
-        # COMM %{comment}       ICMT
+        # COMM  %{comment}      ICMT    COMMENT
         self.comment = ""
 
     def copy_metadata(self, new_data):
