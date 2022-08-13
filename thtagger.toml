@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=60.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "thtagger"
+version = "0.0.2"
+authors = [
+  { name="Weilin Cai", email="weilinfox@inuyasha.love" },
+]
+description = "A easy to use music metadata tagger"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.6"
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: GNU General Public License v2",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/weilinfox/haku-thtagger"
+
+
