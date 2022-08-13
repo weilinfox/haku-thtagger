@@ -3,6 +3,7 @@ import sys
 
 import mutagen
 import PySide6
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QDialog
 
 import ui
@@ -19,6 +20,7 @@ class AboutDialog(QDialog):
         self.ui.setupUi(self)
 
         self.setWindowTitle("About %s" % _app_name)
+        self.setWindowIcon(QIcon(":/img/thtagger.jpg"))
 
         self.ui.aboutLabel.setText("""
 <h2>白玉楼製作所</h2>
