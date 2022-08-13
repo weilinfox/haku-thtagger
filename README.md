@@ -27,6 +27,13 @@ $ git apply doc/patches/to_pyside2.patch
 
 Python 3.6 及以上都是测试过支持的。
 
+### PyPI
+
+```shell
+$ python -m pip install thtagger
+$ python -m thtagger
+```
+
 ### Debian stable
 
 手动打上 PySide2 patch 并安装依赖包：
