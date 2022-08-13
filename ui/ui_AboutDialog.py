@@ -29,7 +29,7 @@ class Ui_AboutDialog(object):
         sizePolicy.setHeightForWidth(AboutDialog.sizePolicy().hasHeightForWidth())
         AboutDialog.setSizePolicy(sizePolicy)
         AboutDialog.setMinimumSize(QSize(400, 300))
-        AboutDialog.setMaximumSize(QSize(400, 300))
+        AboutDialog.setMaximumSize(QSize(16777215, 16777215))
         AboutDialog.setLocale(QLocale(QLocale.English, QLocale.HongKong))
         self.verticalLayout = QVBoxLayout(AboutDialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
