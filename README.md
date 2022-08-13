@@ -25,7 +25,7 @@ $ git apply doc/patches/to_pyside2.patch
 
 ## 安装
 
-Python 3.8.10 及以上都是测试过支持的。
+Python 3.6 及以上都是测试过支持的。
 
 ### Debian stable
 
@@ -40,10 +40,10 @@ $ sudo apt-get install python3 \
 
 ### Archlinux
 
-手动安装依赖包：
+从 AUR 安装：
 
 ```shell
-$ sudo pacman -S python pyside6 python-mutagen python-requests
+$ yay -S thtagger
 ```
 
 ### Windows
