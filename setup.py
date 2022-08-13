@@ -13,7 +13,7 @@ setup(
     include_package_data=False,
     install_requires=[
         'requests',
-        'mutagen',
+        'mutagen>=1.45.0',
         'PySide6'
     ],
 )
