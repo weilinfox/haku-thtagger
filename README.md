@@ -40,10 +40,10 @@ $ sudo apt-get install python3 \
 
 ### Archlinux
 
-手动安装依赖包：
+从 AUR 安装：
 
 ```shell
-$ sudo pacman -S python pyside6 python-mutagen python-requests
+$ yay -S thtagger
 ```
 
 ### Windows
