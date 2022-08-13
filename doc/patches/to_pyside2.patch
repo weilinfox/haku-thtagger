@@ -1,7 +1,50 @@
-diff --git a/forms/aboutDialog.py b/forms/aboutDialog.py
-index c7e9125..012f83c 100644
---- a/forms/aboutDialog.py
-+++ b/forms/aboutDialog.py
+diff --git a/requirements.txt b/requirements.txt
+index b078855..f8a61cd 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,3 +1,3 @@
+ mutagen==1.45.1
+-PySide6==6.3.1
++PySide2==5.15.2.1
+ requests==2.28.1
+diff --git a/setup.py b/setup.py
+index f4a5ca4..6854cfc 100644
+--- a/setup.py
++++ b/setup.py
+@@ -14,6 +14,6 @@ setup(
+     install_requires=[
+         'requests',
+         'mutagen',
+-        'PySide6'
++        'PySide2'
+     ],
+ )
+diff --git a/thtagger/__main__.py b/thtagger/__main__.py
+index c36c206..77e2e3b 100644
+--- a/thtagger/__main__.py
++++ b/thtagger/__main__.py
+@@ -3,7 +3,7 @@ import os
+ import sys
+ import traceback
+ 
+-from PySide6.QtWidgets import QApplication, QMessageBox
++from PySide2.QtWidgets import QApplication, QMessageBox
+ 
+ from thtagger.forms.mainWindow import MainWindow
+ import thtagger.utils.cache
+@@ -21,7 +21,7 @@ if __name__ == "__main__":
+         window = MainWindow()
+         window.show()
+ 
+-        sys.exit(app.exec())
++        sys.exit(app.exec_())
+     except Exception as e:
+         if window is not None:
+             QMessageBox.critical(window, "Unhandled Exception", traceback.format_exc(),
+diff --git a/thtagger/forms/aboutDialog.py b/thtagger/forms/aboutDialog.py
+index 2c6048e..cbd43dd 100644
+--- a/thtagger/forms/aboutDialog.py
++++ b/thtagger/forms/aboutDialog.py
 @@ -2,9 +2,9 @@
  import sys
  
@@ -13,18 +56,18 @@ index c7e9125..012f83c 100644
 +from PySide2.QtGui import QIcon
 +from PySide2.QtWidgets import QDialog
  
- import ui
- from ui.ui_AboutDialog import Ui_AboutDialog
+ import thtagger.ui
+ from thtagger.ui.ui_AboutDialog import Ui_AboutDialog
 @@ -30,4 +30,4 @@ class AboutDialog(QDialog):
  <p><a href="https://github.com/quodlibet/mutagen">Mutagen</a>&nbsp;version:&nbsp;%s</p>
  
  </br><p>License: GNU General Public License Version 2</p>
--        """ % (ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))
-+        """ % (ui.__version__, sys.version, PySide2.__version__,  mutagen.version_string))
-diff --git a/forms/mainWindow.py b/forms/mainWindow.py
-index ee3e5c4..d770ecb 100644
---- a/forms/mainWindow.py
-+++ b/forms/mainWindow.py
+-        """ % (thtagger.ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))
++        """ % (thtagger.ui.__version__, sys.version, PySide2.__version__,  mutagen.version_string))
+diff --git a/thtagger/forms/mainWindow.py b/thtagger/forms/mainWindow.py
+index 31247f5..0cfd18c 100644
+--- a/thtagger/forms/mainWindow.py
++++ b/thtagger/forms/mainWindow.py
 @@ -3,9 +3,9 @@ import os
  import threading
  import traceback
@@ -36,8 +79,8 @@ index ee3e5c4..d770ecb 100644
 +from PySide2.QtGui import QImage, QPixmap, QIcon
 +from PySide2.QtWidgets import QApplication, QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
  
- import ui.rc_Thtagger
- import utils.localDb
+ import thtagger.ui.rc_Thtagger
+ import thtagger.utils.localDb
 @@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
          dialog.setWindowTitle("Select file or folder")
          dialog.setDirectory(default_path)
@@ -53,10 +96,10 @@ index ee3e5c4..d770ecb 100644
          dialog = AboutDialog()
 -        dialog.exec()
 +        dialog.exec_()
-diff --git a/models/fileList.py b/models/fileList.py
+diff --git a/thtagger/models/fileList.py b/thtagger/models/fileList.py
 index 9fb26e1..43e28cd 100644
---- a/models/fileList.py
-+++ b/models/fileList.py
+--- a/thtagger/models/fileList.py
++++ b/thtagger/models/fileList.py
 @@ -1,6 +1,6 @@
  import os
  
@@ -65,10 +108,10 @@ index 9fb26e1..43e28cd 100644
  
  from .tagEditor import is_supported
  from .thtException import ThtException
-diff --git a/models/metadata.py b/models/metadata.py
-index 1a3fb75..9295ed2 100644
---- a/models/metadata.py
-+++ b/models/metadata.py
+diff --git a/thtagger/models/metadata.py b/thtagger/models/metadata.py
+index 83f78df..504572d 100644
+--- a/thtagger/models/metadata.py
++++ b/thtagger/models/metadata.py
 @@ -1,7 +1,7 @@
  import requests
  import traceback
@@ -78,11 +121,11 @@ index 1a3fb75..9295ed2 100644
 +from PySide2.QtWidgets import QApplication
  
  from .thtException import ThtException
- from utils import localDb, remoteDb
-diff --git a/models/tagEditor.py b/models/tagEditor.py
+ from thtagger.utils import localDb, remoteDb
+diff --git a/thtagger/models/tagEditor.py b/thtagger/models/tagEditor.py
 index c7c64b5..37d3eeb 100644
---- a/models/tagEditor.py
-+++ b/models/tagEditor.py
+--- a/thtagger/models/tagEditor.py
++++ b/thtagger/models/tagEditor.py
 @@ -9,8 +9,8 @@ import mutagen.id3
  import mutagen._riff
  from mutagen._util import loadfile
@@ -94,41 +137,10 @@ index c7c64b5..37d3eeb 100644
  
  from .metadata import Metadata
  from .thtException import ThtException
-diff --git a/requirements.txt b/requirements.txt
-index b078855..f8a61cd 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -1,3 +1,3 @@
- mutagen==1.45.1
--PySide6==6.3.1
-+PySide2==5.15.2.1
- requests==2.28.1
-diff --git a/thtagger.py b/thtagger.py
-index 6176d24..1a35899 100755
---- a/thtagger.py
-+++ b/thtagger.py
-@@ -4,7 +4,7 @@ import os
- import sys
- import traceback
- 
--from PySide6.QtWidgets import QApplication, QMessageBox
-+from PySide2.QtWidgets import QApplication, QMessageBox
- 
- from forms.mainWindow import MainWindow
- import utils.cache
-@@ -22,7 +22,7 @@ if __name__ == "__main__":
-         window = MainWindow()
-         window.show()
- 
--        sys.exit(app.exec())
-+        sys.exit(app.exec_())
-     except Exception as e:
-         if window is not None:
-             QMessageBox.critical(window, "Unhandled Exception", traceback.format_exc(),
-diff --git a/ui/rc_Thtagger.py b/ui/rc_Thtagger.py
-index e8a739f..731816c 100644
---- a/ui/rc_Thtagger.py
-+++ b/ui/rc_Thtagger.py
+diff --git a/thtagger/ui/rc_Thtagger.py b/thtagger/ui/rc_Thtagger.py
+index e8a739f..74b581f 100644
+--- a/thtagger/ui/rc_Thtagger.py
++++ b/thtagger/ui/rc_Thtagger.py
 @@ -1,9 +1,9 @@
  # Resource object code (Python 3)
  # Created by: object code
@@ -141,10 +153,19 @@ index e8a739f..731816c 100644
  
  qt_resource_data = b"\
  \x00\x00\x072\
-diff --git a/ui/ui_AboutDialog.py b/ui/ui_AboutDialog.py
+@@ -143,7 +143,7 @@ qt_resource_struct = b"\
+ \x00\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x02\
+ \x00\x00\x00\x00\x00\x00\x00\x00\
+ \x00\x00\x00\x0c\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
+-\x00\x00\x01\x82\x91\xf8\xd3{\
++\x00\x00\x01\x82\x94\xc0e\xaa\
+ "
+ 
+ def qInitResources():
+diff --git a/thtagger/ui/ui_AboutDialog.py b/thtagger/ui/ui_AboutDialog.py
 index e452056..f00796c 100644
---- a/ui/ui_AboutDialog.py
-+++ b/ui/ui_AboutDialog.py
+--- a/thtagger/ui/ui_AboutDialog.py
++++ b/thtagger/ui/ui_AboutDialog.py
 @@ -3,20 +3,15 @@
  ################################################################################
  ## Form generated from reading UI file 'AboutDialog.ui'
@@ -171,10 +192,10 @@ index e452056..f00796c 100644
  
  class Ui_AboutDialog(object):
      def setupUi(self, AboutDialog):
-diff --git a/ui/ui_MainWindow.py b/ui/ui_MainWindow.py
+diff --git a/thtagger/ui/ui_MainWindow.py b/thtagger/ui/ui_MainWindow.py
 index b580d0f..ab970f0 100644
---- a/ui/ui_MainWindow.py
-+++ b/ui/ui_MainWindow.py
+--- a/thtagger/ui/ui_MainWindow.py
++++ b/thtagger/ui/ui_MainWindow.py
 @@ -3,24 +3,15 @@
  ################################################################################
  ## Form generated from reading UI file 'MainWindow.ui'
@@ -205,10 +226,10 @@ index b580d0f..ab970f0 100644
  
  class Ui_MainWindow(object):
      def setupUi(self, MainWindow):
-diff --git a/utils/localDb.py b/utils/localDb.py
+diff --git a/thtagger/utils/localDb.py b/thtagger/utils/localDb.py
 index 6744395..2756ced 100644
---- a/utils/localDb.py
-+++ b/utils/localDb.py
+--- a/thtagger/utils/localDb.py
++++ b/thtagger/utils/localDb.py
 @@ -1,7 +1,7 @@
  import json
  import os

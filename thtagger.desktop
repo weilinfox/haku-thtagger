@@ -4,4 +4,4 @@ Exec=thtagger
 Icon=thtagger
 Terminal=false
 Type=Application
-Categories=Qt;Audio;Music
+Categories=Qt;Audio;Music;AudioVideo

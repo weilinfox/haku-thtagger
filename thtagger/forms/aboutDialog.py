@@ -6,10 +6,10 @@ import PySide6
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QDialog
 
-import ui
-from ui.ui_AboutDialog import Ui_AboutDialog
+import thtagger.ui
+from thtagger.ui.ui_AboutDialog import Ui_AboutDialog
 
-_app_name = "thtagger %s" % ui.__version__
+_app_name = "thtagger %s" % thtagger.ui.__version__
 
 
 class AboutDialog(QDialog):
@@ -30,4 +30,4 @@ class AboutDialog(QDialog):
 <p><a href="https://github.com/quodlibet/mutagen">Mutagen</a>&nbsp;version:&nbsp;%s</p>
 
 </br><p>License: GNU General Public License Version 2</p>
-        """ % (ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))
+        """ % (thtagger.ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))

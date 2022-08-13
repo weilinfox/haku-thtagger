@@ -4,7 +4,7 @@ from PySide6.QtCore import QObject, Signal, QAbstractTableModel, QModelIndex, Qt
 from PySide6.QtWidgets import QApplication
 
 from .thtException import ThtException
-from utils import localDb, remoteDb
+from thtagger.utils import localDb, remoteDb
 
 
 class Metadata:

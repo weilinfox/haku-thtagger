@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 
 import os
 import sys
@@ -6,12 +5,12 @@ import traceback
 
 from PySide6.QtWidgets import QApplication, QMessageBox
 
-from forms.mainWindow import MainWindow
-import utils.cache
+from thtagger.forms.mainWindow import MainWindow
+import thtagger.utils.cache
 
 
 if __name__ == "__main__":
-    cache_dir = utils.cache.get_cache_path()
+    cache_dir = thtagger.utils.cache.get_cache_path()
     if not os.path.exists(cache_dir):
         os.mkdir(cache_dir, 0o755)
 
@@ -29,4 +28,3 @@ if __name__ == "__main__":
                                  QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
         else:
             print(e)
-        print("Handle exception")

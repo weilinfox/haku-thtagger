@@ -7,14 +7,14 @@ from PySide6.QtCore import QThread, QSize, Qt
 from PySide6.QtGui import QImage, QPixmap, QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QListView, QAbstractItemView, QFileDialog, QMessageBox
 
-import ui.rc_Thtagger
-import utils.localDb
-from ui.ui_MainWindow import Ui_MainWindow
-from models import fileList, metadata, tagEditor
-from models.thtException import ThtException
+import thtagger.ui.rc_Thtagger
+import thtagger.utils.localDb
+from thtagger.ui.ui_MainWindow import Ui_MainWindow
+from thtagger.models import fileList, metadata, tagEditor
+from thtagger.models.thtException import ThtException
 from .aboutDialog import AboutDialog
 
-_app_name = "thtagger %s" % ui.__version__
+_app_name = "thtagger %s" % thtagger.ui.__version__
 
 
 class MainWindow(QMainWindow):
@@ -397,7 +397,7 @@ class MainWindow(QMainWindow):
             i += 1
 
         try:
-            utils.localDb.json_save(data)
+            thtagger.utils.localDb.json_save(data)
         except Exception:
             QMessageBox.critical(self, "Thtagger save file error", traceback.format_exc(),
                                  QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
