@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
         self.setWindowTitle(_app_name)
-        self.setWindowIcon(QIcon(":/img/thtagger.jpg"))
+        self.setWindowIcon(QIcon(":/img/thtagger.xpm"))
 
         # 文件列表显示
         self.__fileList = fileList.FileList()

@@ -20,7 +20,7 @@ class AboutDialog(QDialog):
         self.ui.setupUi(self)
 
         self.setWindowTitle("About %s" % _app_name)
-        self.setWindowIcon(QIcon(":/img/thtagger.jpg"))
+        self.setWindowIcon(QIcon(":/img/thtagger.xpm"))
 
         self.ui.aboutLabel.setText("""
 <h2>白玉楼製作所</h2>
