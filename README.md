@@ -1,6 +1,6 @@
 # Thtagger
 
-<img src="img/thtagger.jpg" height="64" width="64" alt="图标">
+<img src="img/thtagger.png" height="64" width="64" alt="图标">
 
 一个简单的，基于 Python3 、 PySide6 和 [Mutagen](https://github.com/quodlibet/mutagen) 的音乐元数据编辑器。
 
@@ -40,10 +40,10 @@ $ sudo apt-get install python3 \
 
 ### Archlinux
 
-从 AUR 安装：
+手动安装依赖包：
 
 ```shell
-$ yay -S thtagger
+$ sudo pacman -S python pyside6 python-mutagen python-requests
 ```
 
 ### Windows
