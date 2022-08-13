@@ -48,7 +48,7 @@ $ sudo pacman -S python pyside6 python-mutagen python-requests
 
 ### Windows
 
-从 [github release](https://github.com/weilinfox/haku-thtagger/releases) 下载预打包的 x86 架构应用程序包，支持 Windows7 及以上，解压缩后运行 ``thtagger.exe`` 。
+从 [github release](https://github.com/weilinfox/haku-thtagger/releases) 或 [gitee release](https://gitee.com/weilinfox/haku-thtagger/releases) 下载预打包的 x86 架构应用程序包，支持 Windows7 及以上，解压缩后运行 ``thtagger.exe`` 。
 
 ## 截图
 

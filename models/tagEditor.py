@@ -96,9 +96,13 @@ class TagItem:
             self.__metadata.disk_number = self.__get_tag_id3_field("TPOS")
             self.__metadata.track_number = self.__get_tag_id3_field("TRCK")
             self.__metadata.genre = self.__get_tag_id3_field("TCON")
-            self.__metadata.comment = self.__get_tag_id3_field("COMM")
 
             if self.__mutagen_file.tags is not None:
+                comment = self.__mutagen_file.tags.getall("COMM")
+                if comment:
+                    comment = comment[0].text
+                if comment:
+                    self.__metadata.comment = comment[0]
                 picture = self.__mutagen_file.tags.getall("APIC")
                 if picture:
                     self.__metadata.cover_extract = picture[0].data
@@ -164,7 +168,9 @@ class TagItem:
             cover_data = f.read()
         if self.__format == self.mp3 or self.__format == self.wav:
             if self.__mutagen_file.tags is None:
-                self.__mutagen_file.tags = mutagen.id3.ID3()
+                self.__mutagen_file.add_tags()
+            else:
+                self.__mutagen_file.delete()
             self.__mutagen_file.tags.setall("TIT2", [mutagen.id3.TIT2(encodings=3, text=self.__metadata.title)])
             self.__mutagen_file.tags.setall("TPE1", [mutagen.id3.TPE1(encodings=3, text=self.__metadata.artist)])
             self.__mutagen_file.tags.setall("TPE2", [mutagen.id3.TPE2(encodings=3, text=self.__metadata.album_artist)])
@@ -173,7 +179,8 @@ class TagItem:
             self.__mutagen_file.tags.setall("TPOS", [mutagen.id3.TPOS(encodings=3, text=self.__metadata.disk_number)])
             self.__mutagen_file.tags.setall("TRCK", [mutagen.id3.TRCK(encodings=3, text=self.__metadata.track_number)])
             self.__mutagen_file.tags.setall("TCON", [mutagen.id3.TCON(encodings=3, text=self.__metadata.genre)])
-            self.__mutagen_file.tags.setall("COMM", [mutagen.id3.COMM(encodings=3, text=self.__metadata.comment)])
+            self.__mutagen_file.tags.setall("COMM", [mutagen.id3.COMM(encodings=3, lang="eng",
+                                                                      text=self.__metadata.comment)])
             self.__mutagen_file.tags.setall("APIC", [mutagen.id3.APIC(encodings=3, type=3,
                                                                       mime=cover_mime, data=cover_data)])
 
