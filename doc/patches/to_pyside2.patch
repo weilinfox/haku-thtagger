@@ -1,19 +1,21 @@
 diff --git a/forms/aboutDialog.py b/forms/aboutDialog.py
-index 97f5cc6..4b534aa 100644
+index c7e9125..012f83c 100644
 --- a/forms/aboutDialog.py
 +++ b/forms/aboutDialog.py
-@@ -2,8 +2,8 @@
+@@ -2,9 +2,9 @@
  import sys
  
  import mutagen
 -import PySide6
+-from PySide6.QtGui import QIcon
 -from PySide6.QtWidgets import QDialog
 +import PySide2
++from PySide2.QtGui import QIcon
 +from PySide2.QtWidgets import QDialog
  
  import ui
  from ui.ui_AboutDialog import Ui_AboutDialog
-@@ -28,4 +28,4 @@ class AboutDialog(QDialog):
+@@ -30,4 +30,4 @@ class AboutDialog(QDialog):
  <p><a href="https://github.com/quodlibet/mutagen">Mutagen</a>&nbsp;version:&nbsp;%s</p>
  
  </br><p>License: GNU General Public License Version 2</p>
@@ -52,7 +54,7 @@ index ee3e5c4..d770ecb 100644
 -        dialog.exec()
 +        dialog.exec_()
 diff --git a/models/fileList.py b/models/fileList.py
-index b2ba9a1..5686133 100644
+index 9fb26e1..43e28cd 100644
 --- a/models/fileList.py
 +++ b/models/fileList.py
 @@ -1,6 +1,6 @@
@@ -64,7 +66,7 @@ index b2ba9a1..5686133 100644
  from .tagEditor import is_supported
  from .thtException import ThtException
 diff --git a/models/metadata.py b/models/metadata.py
-index ea4d5a0..4509cda 100644
+index 1a3fb75..9295ed2 100644
 --- a/models/metadata.py
 +++ b/models/metadata.py
 @@ -1,7 +1,7 @@
@@ -78,7 +80,7 @@ index ea4d5a0..4509cda 100644
  from .thtException import ThtException
  from utils import localDb, remoteDb
 diff --git a/models/tagEditor.py b/models/tagEditor.py
-index ad54a83..d6a94c7 100644
+index c7c64b5..37d3eeb 100644
 --- a/models/tagEditor.py
 +++ b/models/tagEditor.py
 @@ -9,8 +9,8 @@ import mutagen.id3
@@ -140,7 +142,7 @@ index e8a739f..731816c 100644
  qt_resource_data = b"\
  \x00\x00\x072\
 diff --git a/ui/ui_AboutDialog.py b/ui/ui_AboutDialog.py
-index 758de7e..7c07bfb 100644
+index e452056..f00796c 100644
 --- a/ui/ui_AboutDialog.py
 +++ b/ui/ui_AboutDialog.py
 @@ -3,20 +3,15 @@
