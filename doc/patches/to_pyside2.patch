@@ -1,5 +1,5 @@
 diff --git a/requirements.txt b/requirements.txt
-index b078855..f8a61cd 100644
+index 9a2a9f5..1825c08 100644
 --- a/requirements.txt
 +++ b/requirements.txt
 @@ -1,3 +1,3 @@
@@ -8,7 +8,7 @@ index b078855..f8a61cd 100644
 +PySide2
  requests
 diff --git a/setup.py b/setup.py
-index f4a5ca4..6854cfc 100644
+index dfd02ff..2b92978 100644
 --- a/setup.py
 +++ b/setup.py
 @@ -14,6 +14,6 @@ setup(
@@ -42,7 +42,7 @@ index c36c206..77e2e3b 100644
          if window is not None:
              QMessageBox.critical(window, "Unhandled Exception", traceback.format_exc(),
 diff --git a/thtagger/forms/aboutDialog.py b/thtagger/forms/aboutDialog.py
-index 2c6048e..cbd43dd 100644
+index 5692e38..88e69ea 100644
 --- a/thtagger/forms/aboutDialog.py
 +++ b/thtagger/forms/aboutDialog.py
 @@ -2,9 +2,9 @@
@@ -65,7 +65,7 @@ index 2c6048e..cbd43dd 100644
 -        """ % (thtagger.ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))
 +        """ % (thtagger.ui.__version__, sys.version, PySide2.__version__,  mutagen.version_string))
 diff --git a/thtagger/forms/mainWindow.py b/thtagger/forms/mainWindow.py
-index 31247f5..0cfd18c 100644
+index 07df1fe..51168b2 100644
 --- a/thtagger/forms/mainWindow.py
 +++ b/thtagger/forms/mainWindow.py
 @@ -3,9 +3,9 @@ import os
@@ -138,7 +138,7 @@ index c7c64b5..37d3eeb 100644
  from .metadata import Metadata
  from .thtException import ThtException
 diff --git a/thtagger/ui/rc_Thtagger.py b/thtagger/ui/rc_Thtagger.py
-index e8a739f..74b581f 100644
+index 41a523f..a813306 100644
 --- a/thtagger/ui/rc_Thtagger.py
 +++ b/thtagger/ui/rc_Thtagger.py
 @@ -1,9 +1,9 @@
@@ -152,16 +152,7 @@ index e8a739f..74b581f 100644
 +from PySide2 import QtCore
  
  qt_resource_data = b"\
- \x00\x00\x072\
-@@ -143,7 +143,7 @@ qt_resource_struct = b"\
- \x00\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x02\
- \x00\x00\x00\x00\x00\x00\x00\x00\
- \x00\x00\x00\x0c\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
--\x00\x00\x01\x82\x91\xf8\xd3{\
-+\x00\x00\x01\x82\x94\xc0e\xaa\
- "
- 
- def qInitResources():
+ \x00\x00\x00\xdb\
 diff --git a/thtagger/ui/ui_AboutDialog.py b/thtagger/ui/ui_AboutDialog.py
 index e452056..f00796c 100644
 --- a/thtagger/ui/ui_AboutDialog.py
