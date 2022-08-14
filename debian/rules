@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+export PYBUILD_VERBOSE=1
+export PYBUILD_INTERPRETERS=python3
+export PYBUILD_NAME=thtagger
+
+export LC_ALL=C.UTF-8
+
+DESTDIR=${CURDIR}/debian/thtagger
+
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_clean:
+
+override_dh_auto_clean:
+
+override_dh_auto_test:
+
+override_dh_python3:
+	dh_python3 --shebang=/usr/bin/python3
+
+override_dh_auto_install:
+	dh_auto_install
+	install -Dm644 ${CURDIR}/img/thtagger.xpm ${DESTDIR}/usr/share/icons/hicolor/32x32/apps/thtagger.xpm
+	install -Dm644 ${CURDIR}/thtagger.desktop ${DESTDIR}/usr/share/applications/thtagger.desktop
+	install -Dm755 ${CURDIR}/thtagger.sh ${DESTDIR}/usr/bin/thtagger
+
+	mv ${DESTDIR}/usr/lib/python3.* ${DESTDIR}/usr/lib/python3

@@ -1,0 +1,20 @@
+Source: thtagger
+Section: sound
+Priority: optional
+Maintainer: weilinfox <weilinfox@inuyasha.love>
+Homepage: https://github.com/weilinfox/haku-thtagger
+Build-Depends: python3-setuptools,
+               dh-python,
+Standards-Version: 4.6.1
+Rules-Requires-Root: no
+
+Package: thtagger
+Architecture: all
+Depends: python3 (>= 3.6),
+         python3-requests,
+         python3-mutagen (>= 1.45),
+         python3-pyside2.qtcore,
+         python3-pyside2.qtgui,
+         python3-pyside2.qtwidgets,
+Suggests: hicolor-icon-theme
+Description: 一个简单的基于 Python3 、 PySide6 和 Mutagen 的音乐元数据编辑器

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-python -m thtagger
+python3 -m thtagger
 
