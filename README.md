@@ -36,13 +36,10 @@ $ python -m thtagger
 
 ### Debian stable
 
-手动打上 PySide2 patch 并安装依赖包：
+从 [github release](https://github.com/weilinfox/haku-thtagger/releases) 或 [gitee release](https://gitee.com/weilinfox/haku-thtagger/releases) 下载支持全架构的 deb 包安装：
 
 ```shell
-$ git apply doc/patches/to_pyside2.patch
-$ sudo apt-get install python3 \
-                       python3-pyside2.qtcore python3-pyside2.qtgui python3-pyside2.qtwidgets \
-                       python3-mutagen python3-requests
+$ sudo apt-get install ./thtagger_x.x.x_all.deb
 ```
 
 ### Archlinux
@@ -55,7 +52,7 @@ $ yay -S thtagger
 
 ### Windows
 
-从 [github release](https://github.com/weilinfox/haku-thtagger/releases) 或 [gitee release](https://gitee.com/weilinfox/haku-thtagger/releases) 下载预打包的 x86 架构应用程序包，支持 Windows7 及以上，解压缩后运行 ``thtagger.exe`` 。
+从 [github release](https://github.com/weilinfox/haku-thtagger/releases) 或 [gitee release](https://gitee.com/weilinfox/haku-thtagger/releases) 下载预打包的 x86 架构应用程序的 zip 包或单文件 exe ，支持 Windows7 及以上。zip 压缩包解压缩后运行 ``thtagger.exe`` 。
 
 ## 截图
 
