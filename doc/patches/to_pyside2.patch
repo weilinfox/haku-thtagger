@@ -65,7 +65,7 @@ index 5692e38..88e69ea 100644
 -        """ % (thtagger.ui.__version__, sys.version, PySide6.__version__,  mutagen.version_string))
 +        """ % (thtagger.ui.__version__, sys.version, PySide2.__version__,  mutagen.version_string))
 diff --git a/thtagger/forms/mainWindow.py b/thtagger/forms/mainWindow.py
-index 07df1fe..51168b2 100644
+index 162aca8..33daddd 100644
 --- a/thtagger/forms/mainWindow.py
 +++ b/thtagger/forms/mainWindow.py
 @@ -3,9 +3,9 @@ import os
@@ -90,14 +90,17 @@ index 07df1fe..51168b2 100644
              filelist = dialog.selectedFiles()
              if len(filelist) > 0:
                  self.ui.fileSelectText.setText(filelist[0])
-@@ -469,4 +469,4 @@ class MainWindow(QMainWindow):
+@@ -462,7 +462,7 @@ class MainWindow(QMainWindow):
          :return:
          """
          dialog = AboutDialog()
 -        dialog.exec()
 +        dialog.exec_()
+ 
+     def on_thtexception_show(self, title: str, message: str):
+         QMessageBox.warning(self, title, message,
 diff --git a/thtagger/models/fileList.py b/thtagger/models/fileList.py
-index 9fb26e1..43e28cd 100644
+index ed2b324..c6b75c0 100644
 --- a/thtagger/models/fileList.py
 +++ b/thtagger/models/fileList.py
 @@ -1,6 +1,6 @@
@@ -184,7 +187,7 @@ index e452056..f00796c 100644
  class Ui_AboutDialog(object):
      def setupUi(self, AboutDialog):
 diff --git a/thtagger/ui/ui_MainWindow.py b/thtagger/ui/ui_MainWindow.py
-index b580d0f..ab970f0 100644
+index 3b412d0..c356687 100644
 --- a/thtagger/ui/ui_MainWindow.py
 +++ b/thtagger/ui/ui_MainWindow.py
 @@ -3,24 +3,15 @@

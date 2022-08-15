@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     window = None
     try:
-        app = QApplication(sys.argv)
+        app = QApplication()
 
         window = MainWindow()
         window.show()

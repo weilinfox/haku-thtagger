@@ -63,3 +63,11 @@ $ yay -S thtagger
 ## 截图
 
 ![主界面](doc/screenshot/Screenshot_0.png)
+
+## TODO
+
+比较赶，写得很粗糙，只是可以实现基本功能。
+
++ 优化封面缓存
++ 命令行下的自动填写模式
++ 部分 mp3 依旧不识别为 wav 写入的 RIFF INFO 的问题

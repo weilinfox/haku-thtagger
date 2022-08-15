@@ -8,23 +8,22 @@ from .thtException import ThtException
 
 class FileList:
     def __init__(self):
-        self.__pathList = []
+        self.__path = ""
         self.__fileList = []
         self.__fullPathList = []
         self.__listModel = QStringListModel()
 
-    def add(self, path: str):
+    def open(self, path: str):
         """
-        添加目录
+        打开目录
         :param path: 目录路径
         :return: 新加文件列表
         """
-        if os.path.isdir(path):
-            if path in self.__pathList:
-                raise ThtException("Folder already opened")
-            file_list = os.listdir(path)
-        else:
-            return []
+        self.clear()
+        if not os.path.isdir(path):
+            raise ThtException("No such directory")
+
+        file_list = os.listdir(path)
 
         support_list = []
         support_full_list = []
@@ -40,7 +39,9 @@ class FileList:
         if len(support_list) == 0:
             raise ThtException("No Supported file found")
 
-        self.__pathList.append(path)
+        self.__path = path
+        self.__fileList.clear()
+        self.__fullPathList.clear()
         for f in support_list:
             self.__fileList.append(f)
         for f in support_full_list:
@@ -68,25 +69,14 @@ class FileList:
         重载所有路径
         :return:
         """
-        old_list = self.__pathList.copy()
-        new_list = []
-        self.clear()
-        for p in old_list:
-            try:
-                nl = self.add(p)
-            except ThtException:
-                pass
-            else:
-                for i in nl:
-                    new_list.append(i)
-        return new_list
+        return self.open(self.__path)
 
     def clear(self):
         """
         清空
         :return:
         """
-        self.__pathList.clear()
+        self.__path = ""
         self.__fileList.clear()
         self.__fullPathList.clear()
         self.update_list()

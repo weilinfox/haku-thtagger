@@ -344,19 +344,6 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QPushButton" name="fileClearButton">
-             <property name="minimumSize">
-              <size>
-               <width>84</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Clear</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="fileReloadButton">
              <property name="minimumSize">
               <size>

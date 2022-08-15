@@ -57,7 +57,6 @@ class MainWindow(QMainWindow):
 
         self.ui.fileSelectButton.clicked.connect(self.on_file_select)
         self.ui.fileReloadButton.clicked.connect(self.on_file_reload)
-        self.ui.fileClearButton.clicked.connect(self.on_file_clear)
         self.ui.fileDeleteButton.clicked.connect(self.on_file_delete)
         self.ui.fileUpButton.clicked.connect(lambda: self.on_file_move(-1))
         self.ui.fileDownButton.clicked.connect(lambda: self.on_file_move(1))
@@ -129,14 +128,15 @@ class MainWindow(QMainWindow):
             if len(filelist) > 0:
                 self.ui.fileSelectText.setText(filelist[0])
                 try:
-                    file_list = self.__fileList.add(filelist[0])
+                    file_list = self.__fileList.open(filelist[0])
                     self.ui.infoSearchKeyText.setText(os.path.basename(filelist[0]))
+                    self.__tag_editor.clear_file()
                     for f in file_list:
                         self.__tag_editor.add_file(f)
+                    self.ui.tagTableView.resizeColumnsToContents()
                 except ThtException as e:
                     # print(e)
-                    QMessageBox.warning(self, "Thtagger Exception", str(e),
-                                        QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+                    self.on_thtexception_show("Thtagger Exception", str(e))
                 else:
                     self.ui.tagTableView.resizeColumnsToContents()
                     self.ui.tagTableView.resizeRowsToContents()
@@ -146,7 +146,11 @@ class MainWindow(QMainWindow):
         目录重载
         :return:
         """
-        file_list = self.__fileList.reload()
+        try:
+            file_list = self.__fileList.reload()
+        except ThtException as e:
+            file_list = []
+            self.on_thtexception_show("Thtagger Exception", str(e))
         self.__tag_editor.clear_file()
         for f in file_list:
             self.__tag_editor.add_file(f)
@@ -166,15 +170,6 @@ class MainWindow(QMainWindow):
             else:
                 self.ui.fileListView.setCurrentIndex(selected[0].siblingAtRow(selected[0].row()-1))
             self.__tag_editor.remove_file(selected[0].row())
-
-    def on_file_clear(self):
-        """
-        文件列表清空
-        :return:
-        """
-        self.__fileList.clear()
-        self.__tag_editor.clear_file()
-        self.ui.tagTableView.resizeColumnsToContents()
 
     def on_file_move(self, direction: int):
         """
@@ -369,8 +364,7 @@ class MainWindow(QMainWindow):
         :param exception: ThtException 异常
         :return:
         """
-        QMessageBox.warning(self, "Thtagger Exception", str(exception),
-                            QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+        self.on_thtexception_show("Thtagger Exception", str(exception))
         self.ui.infoTableView.setEnabled(True)
         self.stop_source_request_thread()
 
@@ -404,7 +398,6 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Thtagger save file error", traceback.format_exc(),
                                  QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
 
-
     def on_tag_import_source(self):
         """
         按规则重命名 并 导入 source 元数据
@@ -433,8 +426,7 @@ class MainWindow(QMainWindow):
             try:
                 self.__tag_editor.edit_file_name(i, fmt)
             except ThtException as e:
-                QMessageBox.warning(self, "Thtagger Exception", str(e),
-                                    QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+                self.on_thtexception_show("Thtagger Exception", str(e))
 
         self.ui.tagTableView.resizeColumnsToContents()
 
@@ -451,8 +443,7 @@ class MainWindow(QMainWindow):
         try:
             self.__tag_editor.save_files()
         except ThtException as e:
-            QMessageBox.warning(self, "Thtagger save file error", str(e),
-                                QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)
+            self.on_thtexception_show("Thtagger save file error", str(e))
 
     def on_rename_check(self):
         """
@@ -472,3 +463,7 @@ class MainWindow(QMainWindow):
         """
         dialog = AboutDialog()
         dialog.exec()
+
+    def on_thtexception_show(self, title: str, message: str):
+        QMessageBox.warning(self, title, message,
+                            QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.NoButton)

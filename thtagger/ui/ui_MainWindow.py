@@ -200,12 +200,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.fileClearButton = QPushButton(self.fileGroup)
-        self.fileClearButton.setObjectName(u"fileClearButton")
-        self.fileClearButton.setMinimumSize(QSize(84, 32))
-
-        self.verticalLayout_3.addWidget(self.fileClearButton)
-
         self.fileReloadButton = QPushButton(self.fileGroup)
         self.fileReloadButton.setObjectName(u"fileReloadButton")
         self.fileReloadButton.setMinimumSize(QSize(84, 32))
@@ -285,7 +279,6 @@ class Ui_MainWindow(object):
         self.tagSaveButton.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.fileGroup.setTitle(QCoreApplication.translate("MainWindow", u"Open folder(s)", None))
         self.fileSelectButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
-        self.fileClearButton.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.fileReloadButton.setText(QCoreApplication.translate("MainWindow", u"Reload", None))
         self.fileUpButton.setText(QCoreApplication.translate("MainWindow", u"Up", None))
         self.fileDownButton.setText(QCoreApplication.translate("MainWindow", u"Down", None))
