@@ -82,9 +82,9 @@ index 07df1fe..51168b2 100644
  import thtagger.ui.rc_Thtagger
  import thtagger.utils.localDb
 @@ -123,7 +123,7 @@ class MainWindow(QMainWindow):
-         dialog.setWindowTitle("Select file or folder")
          dialog.setDirectory(default_path)
          dialog.setFileMode(QFileDialog.Directory)
+         dialog.setOption(QFileDialog.ShowDirsOnly, True)
 -        if dialog.exec():
 +        if dialog.exec_():
              filelist = dialog.selectedFiles()
