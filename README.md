@@ -54,6 +54,12 @@ $ yay -S thtagger
 
 从 [github release](https://github.com/weilinfox/haku-thtagger/releases) 或 [gitee release](https://gitee.com/weilinfox/haku-thtagger/releases) 下载预打包的 x86 架构应用程序的 zip 包或单文件 exe ，支持 Windows7 及以上。zip 压缩包解压缩后运行 ``thtagger.exe`` 。
 
+## 鸣谢
+
++ [Mutagen](https://github.com/quodlibet/mutagen) 是一切的基础
++ [Picard](https://github.com/metabrainz/picard) 提供了 wav 格式元数据保存的思路
++ [THB Wiki](https://thwiki.cc/) 提供了开放的 API
+
 ## 截图
 
 ![主界面](doc/screenshot/Screenshot_0.png)

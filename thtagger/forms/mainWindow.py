@@ -223,6 +223,7 @@ class MainWindow(QMainWindow):
         self.ui.infoTableView.setModel(None)
         self.ui.albumCover.setText("No image")
         self.ui.albumCoverLable.clear()
+        self.ui.infoTableView.setEnabled(True)
         index = self.ui.infoSourceCombo.currentIndex()
         key = self.ui.infoSearchKeyText.text()
 
