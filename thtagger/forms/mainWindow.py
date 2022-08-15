@@ -123,6 +123,7 @@ class MainWindow(QMainWindow):
         dialog.setWindowTitle("Select file or folder")
         dialog.setDirectory(default_path)
         dialog.setFileMode(QFileDialog.Directory)
+        dialog.setOption(QFileDialog.ShowDirsOnly, True)
         if dialog.exec():
             filelist = dialog.selectedFiles()
             if len(filelist) > 0:
